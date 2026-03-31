@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import BasicLayout from './layouts/BasicLayout';
+import HomePage from './pages/HomePage';
 
 
 const router = createBrowserRouter([
@@ -12,7 +13,9 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Welcome to MicroTasker!</div>
+        element: <div>
+          <HomePage />
+        </div>
       }
     ]
   }

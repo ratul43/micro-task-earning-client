@@ -7,3 +7,4 @@ Technologies used:
 Dependencies: 
  - Tailwind CSS
  - react-router
+ - swiper
