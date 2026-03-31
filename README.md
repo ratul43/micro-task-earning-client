@@ -3,3 +3,7 @@ Technologies used:
  - Express JS
  - NodeJs
  - Tailwind CSS
+
+Dependencies: 
+ - Tailwind CSS
+ - react-router
