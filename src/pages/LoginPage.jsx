@@ -1,7 +1,18 @@
 // LoginPage.jsx
 import React from "react";
+import { useForm } from "react-hook-form";
 
 const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data); // you will handle login later
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
@@ -11,8 +22,8 @@ const LoginPage = () => {
           Welcome Back
         </h2>
 
-        {/* Email & Password Form */}
-        <form className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           
           {/* Email */}
           <div>
@@ -20,8 +31,20 @@ const LoginPage = () => {
             <input
               type="email"
               placeholder="Enter your email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Invalid email format",
+                },
+              })}
               className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -30,8 +53,16 @@ const LoginPage = () => {
             <input
               type="password"
               placeholder="Enter your password"
+              {...register("password", {
+                required: "Password is required",
+              })}
               className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Forgot Password */}
@@ -43,7 +74,7 @@ const LoginPage = () => {
 
           {/* Login Button */}
           <button
-            type="button"
+            type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition"
           >
             Login
@@ -57,7 +88,7 @@ const LoginPage = () => {
           <div className="flex-grow h-px bg-gray-300"></div>
         </div>
 
-        {/* Google Sign In */}
+        {/* Google Sign In (UI Only) */}
         <button
           type="button"
           className="w-full flex items-center justify-center gap-3 border py-2 rounded-md hover:bg-gray-50 transition"
