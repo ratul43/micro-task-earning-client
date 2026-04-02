@@ -1,11 +1,91 @@
-import React from 'react';
+// DashboardLayout.jsx
+import React, { useState } from "react";
 
-const DashboardLayout = () => {
-    return (
-        <div>
-            This is the dashboard layout.
+const DashboardLayout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      
+      {/* Sidebar */}
+      <div
+        className={`fixed md:static z-40 top-0 left-0 h-full w-64 bg-blue-600 text-white transform 
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+        md:translate-x-0 transition-transform duration-300`}
+      >
+        <div className="p-5 text-2xl font-bold border-b border-blue-500">
+          MicroTasker
         </div>
-    );
+
+        <nav className="p-4 space-y-2">
+          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Home
+          </a>
+          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            TaskList
+          </a>
+          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            My Submissions
+          </a>
+          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Withdrawals
+          </a>
+        </nav>
+      </div>
+
+      {/* Overlay (mobile) */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        
+        {/* Top Navbar */}
+        <div className="flex items-center justify-between bg-white shadow px-4 py-3">
+          
+          {/* Hamburger */}
+          <button
+            className="md:hidden"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            <div className="space-y-1">
+              <div className="w-6 h-0.5 bg-black"></div>
+              <div className="w-6 h-0.5 bg-black"></div>
+              <div className="w-6 h-0.5 bg-black"></div>
+            </div>
+          </button>
+
+          {/* Title */}
+          <h1 className="text-lg font-semibold">Dashboard</h1>
+
+          {/* User Info */}
+          <div className="flex items-center gap-3">
+            <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm font-medium">
+              Coins: 120
+            </span>
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="user"
+              className="w-8 h-8 rounded-full"
+            />
+          </div>
+        </div>
+
+        {/* Page Content */}
+        <div className="p-6 overflow-y-auto">
+          {children || (
+            <div className="text-gray-600">
+              Your dashboard content goes here...
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default DashboardLayout;
