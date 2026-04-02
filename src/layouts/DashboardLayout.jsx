@@ -1,5 +1,6 @@
 // DashboardLayout.jsx
 import React, { useState } from "react";
+import Footer from "../components/Footer"; // adjust path if needed
 
 const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,7 +34,7 @@ const DashboardLayout = ({ children }) => {
         </nav>
       </div>
 
-      {/* Overlay (mobile) */}
+      {/* Overlay (Mobile) */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black opacity-30 md:hidden"
@@ -68,20 +69,25 @@ const DashboardLayout = ({ children }) => {
               Coins: 120
             </span>
             <img
-              src="https://i.pravatar.cc/40"
+              src="https://images.pexels.com/photos/5354069/pexels-photo-5354069.jpeg"
               alt="user"
               className="w-8 h-8 rounded-full"
             />
           </div>
         </div>
 
-        {/* Page Content */}
-        <div className="p-6 overflow-y-auto">
-          {children || (
-            <div className="text-gray-600">
-              Your dashboard content goes here...
-            </div>
-          )}
+        {/* Content + Footer */}
+        <div className="flex flex-col flex-1">
+          
+          {/* Page Content */}
+          <div className="p-6 flex-1 overflow-y-auto">
+            {/* Dashboard Content Goes Here */}
+            {children}
+
+          </div>
+
+          {/* Footer */}
+          <Footer />
         </div>
       </div>
     </div>
