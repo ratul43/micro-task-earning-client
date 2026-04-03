@@ -13,6 +13,8 @@ import ApprovedSubmissions from "../components/dashboard/workers/ApprovedSubmiss
 import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
 import MySubmission from "../components/MySubmission";
+import Withdrawals from "../components/Withdrawals";
+import AdminState from "../components/admin/AdminState";
 
 export const router = createBrowserRouter([
   {
@@ -87,7 +89,19 @@ export const router = createBrowserRouter([
         element: <div>
           <MySubmission />
         </div>
-      }
+      },
+      {
+        path: "admin",
+        element: <div>
+          <AdminState />
+        </div>
+      },
+      {
+    path: "withdrawals",
+    element: <div>
+      <Withdrawals />
+    </div>
+  }
 
      
     ]
@@ -95,5 +109,6 @@ export const router = createBrowserRouter([
   {
     path: "/purchase-coins",
     element: <PurchaseCoins />
-  }
+  },
+  
 ]);

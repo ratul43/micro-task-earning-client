@@ -24,7 +24,11 @@ const DashboardLayout = () => {
             Home
           </Link>
           <Link to="/dashboard/states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            States
+           Worker States
+          </Link>
+
+          <Link to="/dashboard/admin" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+           Admin States
           </Link>
 
           <Link to="/dashboard/approved-submissions" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
