@@ -53,6 +53,19 @@ const DashboardLayout = () => {
           <Link to="/dashboard/withdrawals" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Withdrawals
           </Link>
+
+          <Link to="/dashboard/withdraw-request" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Withdraw Request
+          </Link>
+
+          <Link to="/dashboard/manage-users" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Manage Users
+          </Link>
+
+          <Link to="/dashboard/manage-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Manage Tasks
+          </Link>
+
         </nav>
       </div>
 
