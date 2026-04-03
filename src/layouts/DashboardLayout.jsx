@@ -1,8 +1,9 @@
 // DashboardLayout.jsx
 import React, { useState } from "react";
 import Footer from "../components/Footer"; // adjust path if needed
+import { Link, Outlet } from "react-router";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -19,18 +20,23 @@ const DashboardLayout = ({ children }) => {
         </div>
 
         <nav className="p-4 space-y-2">
-          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+          <Link to="/dashboard" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Home
-          </a>
-          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+          </Link>
+
+          <Link to="/dashboard/add-task" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Add New Task
+          </Link>
+
+          <Link to="/dashboard/tasklist" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             TaskList
-          </a>
-          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+          </Link>
+          <Link to="/dashboard/submissions" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             My Submissions
-          </a>
-          <a className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+          </Link>
+          <Link to="/dashboard/withdrawals" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Withdrawals
-          </a>
+          </Link>
         </nav>
       </div>
 
@@ -82,7 +88,7 @@ const DashboardLayout = ({ children }) => {
           {/* Page Content */}
           <div className="p-6 flex-1 overflow-y-auto">
             {/* Dashboard Content Goes Here */}
-            {children}
+            <Outlet />
 
           </div>
 

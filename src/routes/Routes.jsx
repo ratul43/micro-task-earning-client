@@ -5,6 +5,8 @@ import AuthLayout from './../layouts/AuthLayout';
 import RegistrationPage from './../pages/RegistrationPage';
 import LoginPage from "../pages/LoginPage";
 import DashboardLayout from "../layouts/DashboardLayout";
+import AddTask from "../components/forms/AddTask";
+import PurchaseCoins from './../components/PurchaseCoins';
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +37,17 @@ export const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    Component: DashboardLayout
+    Component: DashboardLayout,
+    children: [   
+      {
+        path: "add-task",
+        element: 
+          <AddTask />
+      }
+    ]
+  },
+  {
+    path: "/purchase-coins",
+    element: <PurchaseCoins />
   }
 ]);
