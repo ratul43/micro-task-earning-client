@@ -27,6 +27,10 @@ const DashboardLayout = () => {
             States
           </Link>
 
+          <Link to="/dashboard/approved-submissions" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Approved Submission 
+          </Link>
+
           <Link to="/dashboard/add-task" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Add New Task
           </Link>

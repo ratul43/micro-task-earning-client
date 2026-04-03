@@ -9,6 +9,7 @@ import AddTask from "../components/forms/AddTask";
 import PurchaseCoins from './../components/PurchaseCoins';
 import AddedTasks from "../components/dashboard/buyers/table/AddedTasks";
 import WorkerStats from "../components/dashboard/workers/States";
+import ApprovedSubmissions from "../components/dashboard/workers/ApprovedSubmissions";
 
 export const router = createBrowserRouter([
   {
@@ -56,8 +57,14 @@ export const router = createBrowserRouter([
         path: "states",
         element: <div>
           <WorkerStats>
-            
+
           </WorkerStats>
+        </div>
+      },
+      {
+        path: "approved-submissions",
+        element: <div>
+          <ApprovedSubmissions />
         </div>
       }
     ]
