@@ -23,6 +23,9 @@ const DashboardLayout = () => {
           <Link to="/dashboard" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Home
           </Link>
+          <Link to="/dashboard/states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            States
+          </Link>
 
           <Link to="/dashboard/add-task" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Add New Task
