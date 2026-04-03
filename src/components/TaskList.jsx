@@ -81,7 +81,7 @@ const TaskList = () => {
 
             {/* Button */}
             <button className="mt-4 bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 transition">
-                <Link to={`/tasks/task-details`}>
+                <Link to={`/dashboard/tasks/task-details`}>
                 View Details
                 </Link>
               

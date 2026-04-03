@@ -11,6 +11,7 @@ import AddedTasks from "../components/dashboard/buyers/table/AddedTasks";
 import WorkerStats from "../components/dashboard/workers/States";
 import ApprovedSubmissions from "../components/dashboard/workers/ApprovedSubmissions";
 import TaskList from "../components/TaskList";
+import TaskDetails from "../components/TaskDetails";
 
 export const router = createBrowserRouter([
   {
@@ -74,6 +75,13 @@ export const router = createBrowserRouter([
           <TaskList />
         </div>
       },
+      {
+        path: "tasks/task-details",
+        element: <div>
+          <TaskDetails />
+        </div>
+      }
+
      
     ]
   },
