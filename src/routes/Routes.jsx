@@ -10,6 +10,7 @@ import PurchaseCoins from './../components/PurchaseCoins';
 import AddedTasks from "../components/dashboard/buyers/table/AddedTasks";
 import WorkerStats from "../components/dashboard/workers/States";
 import ApprovedSubmissions from "../components/dashboard/workers/ApprovedSubmissions";
+import TaskList from "../components/TaskList";
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +67,14 @@ export const router = createBrowserRouter([
         element: <div>
           <ApprovedSubmissions />
         </div>
-      }
+      },
+      {
+        path: "tasks",
+        element: <div>
+          <TaskList />
+        </div>
+      },
+     
     ]
   },
   {

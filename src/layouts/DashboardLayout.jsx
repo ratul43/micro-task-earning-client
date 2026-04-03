@@ -38,6 +38,11 @@ const DashboardLayout = () => {
           <Link to="/dashboard/added-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Added Tasks
           </Link>
+
+          <Link to="/dashboard/tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+            Task List
+          </Link>
+
           <Link to="/dashboard/submissions" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             My Submissions
           </Link>
