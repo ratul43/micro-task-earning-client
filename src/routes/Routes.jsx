@@ -12,6 +12,7 @@ import WorkerStats from "../components/dashboard/workers/States";
 import ApprovedSubmissions from "../components/dashboard/workers/ApprovedSubmissions";
 import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
+import MySubmission from "../components/MySubmission";
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +80,12 @@ export const router = createBrowserRouter([
         path: "tasks/task-details",
         element: <div>
           <TaskDetails />
+        </div>
+      },
+      {
+        path: "submissions",
+        element: <div>
+          <MySubmission />
         </div>
       }
 
