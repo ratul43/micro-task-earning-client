@@ -17,6 +17,7 @@ import Withdrawals from "../components/Withdrawals";
 import AdminState from "../components/admin/AdminState";
 import WithdrawRequest from "../components/admin/WithdrawRequest";
 import ManageUsers from "../components/admin/ManageUsers";
+import ManageTasks from "../components/admin/ManageTasks";
 
 export const router = createBrowserRouter([
   {
@@ -119,7 +120,7 @@ export const router = createBrowserRouter([
   {
     path: "manage-tasks",
     element: <div>
-      Manage Tasks Page - Coming Soon!  
+      <ManageTasks />
       </div>
   }
 
