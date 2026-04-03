@@ -7,6 +7,7 @@ import LoginPage from "../pages/LoginPage";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AddTask from "../components/forms/AddTask";
 import PurchaseCoins from './../components/PurchaseCoins';
+import AddedTasks from "../components/buyers/table/AddedTasks";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,12 @@ export const router = createBrowserRouter([
         path: "add-task",
         element: 
           <AddTask />
+      },
+      {
+        path: "added-tasks",
+        element: <div>
+          <AddedTasks />
+        </div>
       }
     ]
   },
