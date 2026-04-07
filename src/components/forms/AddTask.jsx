@@ -13,7 +13,7 @@ const AddTask = ({ availableCoins = 200 }) => {
 
   const onSubmit = async (data) => {
     if (totalCost > availableCoins) {
-      alert("Not available Coin. Purchase Coin");
+      confirm("Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?") 
       window.location.href = "/purchase-coins"; // redirect
       return;
     }
