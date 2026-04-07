@@ -4,7 +4,7 @@ import { apiFetch } from "../../apiService";
 import { toast } from "react-toastify";
 
 const AddTask = ({ availableCoins = 200 }) => {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, reset, formState: {errors} } = useForm();
 
   const requiredWorkers = watch("required_workers") || 0;
   const payableAmount = watch("payable_amount") || 0;
@@ -12,22 +12,26 @@ const AddTask = ({ availableCoins = 200 }) => {
   const totalCost = requiredWorkers * payableAmount;
 
   const onSubmit = async (data) => {
-    // if (totalCost > availableCoins) {
-    //   alert("Not available Coin. Purchase Coin");
-    //   window.location.href = "/purchase-coins"; // redirect
-    //   return;
-    // }
+    if (totalCost > availableCoins) {
+      alert("Not available Coin. Purchase Coin");
+      window.location.href = "/purchase-coins"; // redirect
+      return;
+    }
 
     try {
       const response = await apiFetch("/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({...data, totalCost}),
+        // buyer name, buyer_email, task_id, 
       });
 
-      console.log(response);
+      // console.log(response);
 
       toast.success("Task Added Successfully");
+      reset(); // Clear form after successful submission
+
+
     } 
     catch (err) {
       console.error("Error adding task:", err);
@@ -45,19 +49,25 @@ const AddTask = ({ availableCoins = 200 }) => {
           <input
             type="text"
             placeholder="Task Title"
-            {...register("task_title", { required: true })}
+            {...register("task_title", { required: "Name is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.task_title && (
+            <p className="text-red-500 text-sm">{errors.task_title.message}</p>
+          )}
         </div>
 
-        {/* Detail */}
+        {/* Details */}
         <div>
-          <label className="block font-medium mb-1">Detail</label>
+          <label className="block font-medium mb-1">Details</label>
           <textarea
             placeholder="Task Detail Description"
-            {...register("task_detail", { required: true })}
+            {...register("task_detail", { required: "Details are required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.task_detail && (
+            <p className="text-red-500 text-sm">{errors.task_detail.message}</p>
+          )}
         </div>
 
         {/* Workers */}
@@ -66,9 +76,12 @@ const AddTask = ({ availableCoins = 200 }) => {
           <input
             type="number"
             placeholder="Required Workers (e.g. 100)"
-            {...register("required_workers", { required: true })}
+            {...register("required_workers", { required: "Required workers is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.required_workers && (
+            <p className="text-red-500 text-sm">{errors.required_workers.message}</p>
+          )}
         </div>
 
         {/* Payable Amount */}
@@ -79,9 +92,12 @@ const AddTask = ({ availableCoins = 200 }) => {
           <input
             type="number"
             placeholder="Payable Amount per Worker (e.g. 10)"
-            {...register("payable_amount", { required: true })}
+            {...register("payable_amount", { required: "Payable amount is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.payable_amount && (
+            <p className="text-red-500 text-sm">{errors.payable_amount.message}</p>
+          )}
         </div>
 
         {/* Completion Date */}
@@ -89,9 +105,12 @@ const AddTask = ({ availableCoins = 200 }) => {
           <label className="block font-medium mb-1">Completion Date</label>
           <input
             type="date"
-            {...register("completion_date", { required: true })}
+            {...register("completion_date", { required: "Completion date is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.completion_date && (
+            <p className="text-red-500 text-sm">{errors.completion_date.message}</p>
+          )}
         </div>
 
         {/* Submission Info */}
@@ -100,9 +119,12 @@ const AddTask = ({ availableCoins = 200 }) => {
           <input
             type="text"
             placeholder="Submission Info (e.g. screenshot proof)"
-            {...register("submission_info", { required: true })}
+            {...register("submission_info", { required: "Submission info is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.submission_info && (
+            <p className="text-red-500 text-sm">{errors.submission_info.message}</p>
+          )}
         </div>
 
         {/* Image URL */}
@@ -111,9 +133,12 @@ const AddTask = ({ availableCoins = 200 }) => {
           <input
             type="text"
             placeholder="Task Image URL"
-            {...register("task_image_url", { required: true })}
+            {...register("task_image_url", { required: "Image URL is required" })}
             className="w-full border p-2 rounded"
           />
+          {errors.task_image_url && (
+            <p className="text-red-500 text-sm">{errors.task_image_url.message}</p>
+          )}
         </div>
 
         {/* Total Cost Display */}
@@ -130,7 +155,7 @@ const AddTask = ({ availableCoins = 200 }) => {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700"
+          className="w-full bg-blue-600 cursor-pointer text-white py-2 rounded-md font-semibold hover:bg-blue-700"
         >
           Add Task
         </button>
