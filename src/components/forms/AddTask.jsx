@@ -1,5 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { apiFetch } from "../../apiService";
+import { toast } from "react-toastify";
 
 const AddTask = ({ availableCoins = 200 }) => {
   const { register, handleSubmit, watch } = useForm();
@@ -9,15 +11,27 @@ const AddTask = ({ availableCoins = 200 }) => {
 
   const totalCost = requiredWorkers * payableAmount;
 
-  const onSubmit = (data) => {
-    if (totalCost > availableCoins) {
-      alert("Not available Coin. Purchase Coin");
-      window.location.href = "/purchase-coins"; // redirect
-      return;
-    }
+  const onSubmit = async (data) => {
+    // if (totalCost > availableCoins) {
+    //   alert("Not available Coin. Purchase Coin");
+    //   window.location.href = "/purchase-coins"; // redirect
+    //   return;
+    // }
 
-    console.log({ ...data, totalCost });
-    alert("Task Added Successfully (UI only)");
+    try {
+      const response = await apiFetch("/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      console.log(response);
+
+      toast.success("Task Added Successfully");
+    } 
+    catch (err) {
+      console.error("Error adding task:", err);
+    }
   };
 
   return (
@@ -25,86 +39,81 @@ const AddTask = ({ availableCoins = 200 }) => {
       <h2 className="text-2xl font-bold mb-6">Add New Task</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        
         {/* Title */}
         <div>
-            <label className="block font-medium mb-1">Name</label>
- <input
-          type="text"
-          placeholder="Task Title"
-          {...register("task_title", { required: true })}
-          className="w-full border p-2 rounded"
-        />
-
-            </div>
-       
+          <label className="block font-medium mb-1">Name</label>
+          <input
+            type="text"
+            placeholder="Task Title"
+            {...register("task_title", { required: true })}
+            className="w-full border p-2 rounded"
+          />
+        </div>
 
         {/* Detail */}
         <div>
-            <label className="block font-medium mb-1">Detail</label>
-             <textarea
-          placeholder="Task Detail Description"
-          {...register("task_detail", { required: true })}
-          className="w-full border p-2 rounded"
-        />
+          <label className="block font-medium mb-1">Detail</label>
+          <textarea
+            placeholder="Task Detail Description"
+            {...register("task_detail", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
-       
 
         {/* Workers */}
         <div>
-            <label className="block font-medium mb-1">Required Workers</label>
-            <input
-          type="number"
-          placeholder="Required Workers (e.g. 100)"
-          {...register("required_workers", { required: true })}
-          className="w-full border p-2 rounded"
-        />
+          <label className="block font-medium mb-1">Required Workers</label>
+          <input
+            type="number"
+            placeholder="Required Workers (e.g. 100)"
+            {...register("required_workers", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
-        
 
         {/* Payable Amount */}
         <div>
-            <label className="block font-medium mb-1">Payable Amount per Worker</label>
+          <label className="block font-medium mb-1">
+            Payable Amount per Worker
+          </label>
           <input
-          type="number"
-          placeholder="Payable Amount per Worker (e.g. 10)"
-          {...register("payable_amount", { required: true })}
-          className="w-full border p-2 rounded"
-        />  
+            type="number"
+            placeholder="Payable Amount per Worker (e.g. 10)"
+            {...register("payable_amount", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
-        
 
         {/* Completion Date */}
         <div>
-            <label className="block font-medium mb-1">Completion Date</label>
+          <label className="block font-medium mb-1">Completion Date</label>
           <input
-          type="date"
-          {...register("completion_date", { required: true })}
-          className="w-full border p-2 rounded"
-        />  
+            type="date"
+            {...register("completion_date", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
-        
 
         {/* Submission Info */}
         <div>
-            <label className="block font-medium mb-1">Submission Info</label>
-            <input
-          type="text"
-          placeholder="Submission Info (e.g. screenshot proof)"
-          {...register("submission_info", { required: true })}
-          className="w-full border p-2 rounded"
-        />
+          <label className="block font-medium mb-1">Submission Info</label>
+          <input
+            type="text"
+            placeholder="Submission Info (e.g. screenshot proof)"
+            {...register("submission_info", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
 
         {/* Image URL */}
         <div>
-            <label className="block font-medium mb-1">Image URL</label>
-            <input
-          type="text"
-          placeholder="Task Image URL"
-          {...register("task_image_url", { required: true })}
-          className="w-full border p-2 rounded"
-        />
+          <label className="block font-medium mb-1">Image URL</label>
+          <input
+            type="text"
+            placeholder="Task Image URL"
+            {...register("task_image_url", { required: true })}
+            className="w-full border p-2 rounded"
+          />
         </div>
 
         {/* Total Cost Display */}
