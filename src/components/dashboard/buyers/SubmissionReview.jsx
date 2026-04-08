@@ -2,23 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../../../apiService";
 
-// const submissions = [
-//   {
-//     id: 1,
-//     worker_name: "Alice",
-//     task_title: "Watch YouTube video",
-//     payable_amount: 10,
-//     submission_details: "Screenshot of comment submitted",
-//   },
-//   {
-//     id: 2,
-//     worker_name: "Bob",
-//     task_title: "Like Instagram Post",
-//     payable_amount: 5,
-//     submission_details: "Profile screenshot uploaded",
-//   },
-// ];
-
 const SubmissionReview = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
@@ -26,8 +9,8 @@ const SubmissionReview = () => {
 
   useEffect(()=>{
     (async()=>{
-    await apiFetch(`/tasks/submit`)
-    .then(data => setSubmissions(data))
+   const data = await apiFetch(`/tasks/submit`)
+   setSubmissions(data)
   })()
   }, [])
 
