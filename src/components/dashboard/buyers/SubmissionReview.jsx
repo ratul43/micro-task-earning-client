@@ -1,26 +1,38 @@
 // BuyerPendingSubmissions.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "../../../apiService";
 
-const submissions = [
-  {
-    id: 1,
-    worker_name: "Alice",
-    task_title: "Watch YouTube video",
-    payable_amount: 10,
-    submission_details: "Screenshot of comment submitted",
-  },
-  {
-    id: 2,
-    worker_name: "Bob",
-    task_title: "Like Instagram Post",
-    payable_amount: 5,
-    submission_details: "Profile screenshot uploaded",
-  },
-];
+// const submissions = [
+//   {
+//     id: 1,
+//     worker_name: "Alice",
+//     task_title: "Watch YouTube video",
+//     payable_amount: 10,
+//     submission_details: "Screenshot of comment submitted",
+//   },
+//   {
+//     id: 2,
+//     worker_name: "Bob",
+//     task_title: "Like Instagram Post",
+//     payable_amount: 5,
+//     submission_details: "Profile screenshot uploaded",
+//   },
+// ];
 
 const SubmissionReview = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
+  const [submissions, setSubmissions] = useState([]);
+
+  useEffect(()=>{
+    (async()=>{
+    await apiFetch(`/tasks/submit`)
+    .then(data => setSubmissions(data))
+  })()
+  }, [])
+
+//   console.log(submissions);
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       
@@ -46,7 +58,7 @@ const SubmissionReview = () => {
           <tbody>
             {submissions.map((item) => (
               <tr
-                key={item.id}
+                key={item._id}
                 className="border-t hover:bg-gray-50"
               >
                 <td className="py-2 px-4 font-medium">
