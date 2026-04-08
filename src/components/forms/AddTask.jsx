@@ -26,7 +26,7 @@ const AddTask = ({ availableCoins = 200 }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({...data, totalCost}),
-        // buyer name, buyer_email, task_id, 
+        // buyer name, buyer_email,  
       });
 
       // console.log(response);
