@@ -19,6 +19,7 @@ import WithdrawRequest from "../components/admin/WithdrawRequest";
 import ManageUsers from "../components/admin/ManageUsers";
 import ManageTasks from "../components/admin/ManageTasks";
 import SimpleModal from "../elements/SimpleModal";
+import SubmissionReview from "../components/dashboard/buyers/SubmissionReview";
 
 export const router = createBrowserRouter([
   {
@@ -92,6 +93,12 @@ export const router = createBrowserRouter([
         path: "submissions",
         element: <div>
           <MySubmission />
+        </div>
+      },
+      {
+        path: "submissions-review",
+        element: <div>
+          <SubmissionReview />
         </div>
       },
       {
