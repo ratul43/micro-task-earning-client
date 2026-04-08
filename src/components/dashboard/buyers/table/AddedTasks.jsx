@@ -37,13 +37,13 @@ const AddedTasks = () => {
   const [tasks, setTasks] = useState([]);
   useEffect(() => {
     (async () => {
-      const mainData = await apiFetch(`/tasks?email=edison@gmail.com`);
+      const mainData = await apiFetch(`/tasks`);
 
       setTasks(mainData);
     })();
   }, []);
 
-  // console.log(tasks);
+  console.log(tasks);
 
   const deleteOperation = async (taskId) => {
     try{
