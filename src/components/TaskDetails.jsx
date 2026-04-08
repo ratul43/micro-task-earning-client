@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { apiFetch } from "../apiService";
+import { toast } from "react-toastify";
 
 const TaskDetails = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -24,7 +25,7 @@ const TaskDetails = () => {
     worker_email: "worker@example.com",
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const submissionData = {
       task_id: task._id,
       task_title: task.task_title,
@@ -34,12 +35,25 @@ const TaskDetails = () => {
       buyer_name: task.buyer_name,
       buyer_email: task.buyer_email,
       submission_details: data.submission_details,
-      current_date: new Date().toISOString(),
+      submission_date: new Date().toISOString(),
       status: "pending",
     };
 
-    console.log(submissionData);
-    alert("Submission sent (UI only)");
+    // console.log(submissionData);
+
+    await apiFetch(`/tasks/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(submissionData),
+    }).then(()=>{
+      toast.success("Task submitted successfully!. Waiting for buyer's review.")
+    }).catch((error)=>{
+      toast.error("Failed to submit task. Please try again.");
+      console.error("Submission error:", error);  
+    })
+
 
     reset();
   };
