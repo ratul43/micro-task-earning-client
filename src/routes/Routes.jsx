@@ -18,6 +18,7 @@ import AdminState from "../components/admin/AdminState";
 import WithdrawRequest from "../components/admin/WithdrawRequest";
 import ManageUsers from "../components/admin/ManageUsers";
 import ManageTasks from "../components/admin/ManageTasks";
+import SimpleModal from "../elements/SimpleModal";
 
 export const router = createBrowserRouter([
   {
@@ -131,5 +132,9 @@ export const router = createBrowserRouter([
     path: "/purchase-coins",
     element: <PurchaseCoins />
   },
+  {
+    path: "/test",
+    element: <SimpleModal />
+  }
   
 ]);
