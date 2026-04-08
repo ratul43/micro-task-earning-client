@@ -1,6 +1,7 @@
 // MyTasks.jsx
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiService";
+import { toast } from "react-toastify";
 
 // const tasks = [
 //   {
@@ -42,7 +43,21 @@ const AddedTasks = () => {
     })();
   }, []);
 
-  console.log(tasks);
+  // console.log(tasks);
+
+  const deleteOperation = async (taskId) => {
+    try{
+      const response = await apiFetch(`/tasks?id=${taskId}`)
+      if(response){
+        setTasks(prev => prev.filter(task => task._id !== taskId))
+        toast.success("Task Deleted Successfully")
+      }
+    }
+    catch(err){
+        console.error("Error deleting task:", err);
+    }
+  }
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -92,7 +107,7 @@ const AddedTasks = () => {
                   <button className="bg-yellow-400 text-white px-3 py-1 rounded-md hover:bg-yellow-500 text-sm">
                     Update
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm">
+                  <button onClick={() => deleteOperation(task._id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm">
                     Delete
                   </button>
                 </td>
