@@ -1,6 +1,7 @@
 // TaskList.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { apiFetch } from "../apiService";
 
 const tasks = [
   {
@@ -30,6 +31,14 @@ const tasks = [
 ];
 
 const TaskList = () => {
+  const [task, setTask] = useState([])
+  useEffect(()=>{
+    (async() => {
+      await apiFetch(`/tasks`)
+      .then(data => setTask(data))
+    })();
+  }, [])
+  // console.log(task);
   return (
     <div className="p-6">
       
@@ -39,7 +48,7 @@ const TaskList = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        {tasks.map((task) => (
+        {task.map((task) => (
           <div
             key={task.id}
             className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition flex flex-col justify-between"
@@ -51,7 +60,7 @@ const TaskList = () => {
               </h3>
 
               <p className="text-sm text-gray-500 mb-2">
-                Buyer: <span className="font-medium">{task.buyer_name}</span>
+                Buyer: <span className="font-medium">{task?.buyer_name}</span>
               </p>
 
               <p className="text-sm text-gray-500">
