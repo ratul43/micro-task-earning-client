@@ -13,10 +13,13 @@ const AddTask = ({ availableCoins = 200 }) => {
 
   const onSubmit = async (data) => {
     if (totalCost > availableCoins) {
-      confirm("Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?") 
+      const userConfirmed =  confirm("Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?") 
+      if (userConfirmed) {
       window.location.href = "/purchase-coins"; // redirect
       return;
     }
+  }
+    
 
     try {
       const response = await apiFetch("/tasks", {
