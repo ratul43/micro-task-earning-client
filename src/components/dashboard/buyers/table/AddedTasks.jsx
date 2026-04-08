@@ -98,6 +98,7 @@ const AddedTasks = () => {
               <th className="py-2 px-4">Total Cost</th>
               <th className="py-2 px-4">Deadline</th>
               <th className="py-2 px-4">Task Details</th>
+              <th className="py-2 px-4">Submission Details</th>
               <th className="py-2 px-4">Actions</th>
             </tr>
           </thead>
@@ -122,6 +123,9 @@ const AddedTasks = () => {
                 </td>
                 <td className="py-2 px-4 text-center">
                   {task.task_detail}
+                </td>
+                <td className="py-2 px-4 text-center">
+                  {task.submission_info}
                 </td>
 
                 {/* Actions */}
@@ -193,7 +197,7 @@ const AddedTasks = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
                 <input
