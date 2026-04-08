@@ -83,7 +83,7 @@ export const router = createBrowserRouter([
         </div>
       },
       {
-        path: "tasks/task-details",
+        path: "tasks/task-details/:taskId",
         element: <div>
           <TaskDetails />
         </div>

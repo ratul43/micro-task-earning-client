@@ -3,39 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { apiFetch } from "../apiService";
 
-const tasks = [
-  {
-    id: 1,
-    task_title: "Watch YouTube video and comment",
-    buyer_name: "John Doe",
-    completion_date: "2026-04-20",
-    payable_amount: 10,
-    required_workers: 50,
-  },
-  {
-    id: 2,
-    task_title: "Like Instagram Post",
-    buyer_name: "Alice Smith",
-    completion_date: "2026-04-18",
-    payable_amount: 5,
-    required_workers: 30,
-  },
-  {
-    id: 3,
-    task_title: "App Download & Review",
-    buyer_name: "Michael Lee",
-    completion_date: "2026-04-25",
-    payable_amount: 8,
-    required_workers: 100,
-  },
-];
 
 const TaskList = () => {
-  const [task, setTask] = useState([])
+  const [tasks, setTasks] = useState([])
   useEffect(()=>{
     (async() => {
       await apiFetch(`/tasks`)
-      .then(data => setTask(data))
+      .then(data => setTasks(data))
     })();
   }, [])
   // console.log(task);
@@ -48,7 +22,7 @@ const TaskList = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        {task.map((task) => (
+        {tasks.map((task) => (
           <div
             key={task.id}
             className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition flex flex-col justify-between"
@@ -64,7 +38,7 @@ const TaskList = () => {
               </p>
 
               <p className="text-sm text-gray-500">
-                Deadline:{" "}
+                Completion Date:{" "}
                 <span className="font-medium">
                   {task.completion_date}
                 </span>
@@ -90,7 +64,7 @@ const TaskList = () => {
 
             {/* Button */}
             <button className="mt-4 bg-blue-600 text-white py-2 rounded-md font-medium hover:bg-blue-700 transition">
-                <Link to={`/dashboard/tasks/task-details`}>
+                <Link to={`/dashboard/tasks/task-details/${task._id}`}>
                 View Details
                 </Link>
               

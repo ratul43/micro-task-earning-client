@@ -1,23 +1,22 @@
 // TaskDetails.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router";
+import { apiFetch } from "../apiService";
 
 const TaskDetails = () => {
   const { register, handleSubmit, reset } = useForm();
+  const {taskId} = useParams()
+  const [task, setTask] = useState({})
+  // console.log(taskId);
 
-  // Dummy Task Data
-  const task = {
-    task_id: "12345",
-    task_title: "Watch YouTube video and comment",
-    task_detail: "Watch the full video and leave a meaningful comment.",
-    payable_amount: 10,
-    required_workers: 50,
-    completion_date: "2026-04-20",
-    submission_info: "Submit screenshot of your comment",
-    task_image_url: "https://via.placeholder.com/400x200",
-    buyer_name: "John Doe",
-    buyer_email: "john@example.com",
-  };
+  useEffect(()=>{
+    (async()=>{
+      await apiFetch(`/tasks/details?id=${taskId}`)
+      .then(data => setTask(data))
+    })()
+  }, [taskId])
+
 
   // Dummy Worker Info (replace later)
   const worker = {
@@ -27,7 +26,7 @@ const TaskDetails = () => {
 
   const onSubmit = (data) => {
     const submissionData = {
-      task_id: task.task_id,
+      task_id: task._id,
       task_title: task.task_title,
       payable_amount: task.payable_amount,
       worker_email: worker.worker_email,
