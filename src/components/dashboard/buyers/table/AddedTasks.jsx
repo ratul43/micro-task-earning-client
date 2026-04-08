@@ -3,36 +3,6 @@ import React, { useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiService";
 import { toast } from "react-toastify";
 
-// const tasks = [
-//   {
-//     id: 1,
-//     title: "Watch YouTube video and comment",
-//     workers: 100,
-//     payable: 10,
-//     total: 1000,
-//     deadline: "2026-05-01",
-//     submission: "Screenshot proof",
-//   },
-//   {
-//     id: 2,
-//     title: "Like Instagram Post",
-//     workers: 50,
-//     payable: 5,
-//     total: 250,
-//     deadline: "2026-04-20",
-//     submission: "Profile screenshot",
-//   },
-//   {
-//     id: 3,
-//     title: "App Download & Review",
-//     workers: 200,
-//     payable: 8,
-//     total: 1600,
-//     deadline: "2026-04-15",
-//     submission: "Playstore review screenshot",
-//   },
-// ];
-
 const AddedTasks = () => {
   const [tasks, setTasks] = useState([]);
   useEffect(() => {
