@@ -1,31 +1,19 @@
 // ApprovedSubmissions.jsx
-import React from "react";
+import React, { useEffect } from "react";
+import { apiFetch } from "../../../apiService";
 
-const submissions = [
-  {
-    id: 1,
-    task_title: "Watch YouTube video and comment",
-    payable_amount: 10,
-    buyer_name: "John Doe",
-    status: "approved",
-  },
-  {
-    id: 2,
-    task_title: "Like Instagram Post",
-    payable_amount: 5,
-    buyer_name: "Alice Smith",
-    status: "approved",
-  },
-  {
-    id: 3,
-    task_title: "App Download & Review",
-    payable_amount: 8,
-    buyer_name: "Michael Lee",
-    status: "approved",
-  },
-];
 
 const ApprovedSubmissions = () => {
+
+  const [submissions, setSubmission] = React.useState([]);
+
+  useEffect(()=>{
+    ((async ()=>{
+      await apiFetch(`/tasks/approved`)
+      .then(data => setSubmission(data))
+    })())
+  }, [])
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       
@@ -52,7 +40,7 @@ const ApprovedSubmissions = () => {
           <tbody>
             {submissions.map((item) => (
               <tr
-                key={item.id}
+                key={item._id}
                 className="border-t hover:bg-gray-50 transition"
               >
                 <td className="py-2 px-4 font-medium">
