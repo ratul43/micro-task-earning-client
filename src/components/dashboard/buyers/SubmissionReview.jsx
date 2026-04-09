@@ -1,10 +1,10 @@
 // BuyerPendingSubmissions.jsx
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../../../apiService";
+import { toast } from "react-toastify";
 
 const SubmissionReview = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
-
   const [submissions, setSubmissions] = useState([]);
 
   useEffect(()=>{
@@ -15,7 +15,47 @@ const SubmissionReview = () => {
   }, [])
 
 //   console.log(submissions);
-  
+
+  const updateStatus = async (id) => {
+    const res = await apiFetch(`/tasks/submit/review/${id}`, {
+      method: "PUT",
+    });
+
+    if(res){
+      // Update the submission status in the local state without reloading
+      setSubmissions(prevSubmissions => 
+        prevSubmissions.map(submission => 
+          submission._id === id 
+            ? { ...submission, status: "approved" }
+            : submission
+        )
+      );
+      toast.success("Submission approved successfully!");
+      // Close modal if it's open for this submission
+      if (selectedSubmission?._id === id) {
+        setSelectedSubmission(null);
+      }
+    }
+  }
+
+  const deleteTask = async (id) => {
+    const res = await apiFetch(`/tasks/submit?id=${id}`, {
+      method: "DELETE",
+    });
+
+    if(res){
+      // Remove the submission from local state without reloading
+      setSubmissions(prevSubmissions => 
+        prevSubmissions.filter(submission => submission._id !== id)
+      );
+      toast.success("Submission rejected successfully!");
+      // Close modal if it's open for this submission
+      if (selectedSubmission?._id === id) {
+        setSelectedSubmission(null);
+      }
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       
@@ -68,12 +108,24 @@ const SubmissionReview = () => {
 
                 {/* Action Buttons */}
                 <td className="py-2 px-4 text-center space-x-2">
-                  <button className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600">
+                  {
+                    item.status === "approved" ? 
+                    <>
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-600">Approved</span>
+
+                    </> : 
+                    <>
+
+ <button onClick={() => updateStatus(item._id)} className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600">
                     Approve
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600">
+                  <button onClick={()=>deleteTask(item._id)} className="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600">
                     Reject
                   </button>
+
+                    </>
+                  }
+                 
                 </td>
               </tr>
             ))}
@@ -102,6 +154,28 @@ const SubmissionReview = () => {
             <p className="text-gray-700">
               {selectedSubmission.submission_details}
             </p>
+
+            {/* Add Approve/Reject buttons in modal as well for convenience */}
+            {selectedSubmission.status !== "approved" && (
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    updateStatus(selectedSubmission._id);
+                  }}
+                  className="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => {
+                    deleteTask(selectedSubmission._id);
+                  }}
+                  className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
 
             <button
               onClick={() => setSelectedSubmission(null)}
