@@ -2,6 +2,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { apiFetch } from "../apiService";
 
 const RegistrationPage = () => {
   const {
@@ -10,16 +11,26 @@ const RegistrationPage = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    // Fake existing email check (UI only)
-    if (data.email === "test@example.com") {
-      toast.error("Email already exists!");
-      return;
+ const onSubmit = async (data) => {
+  try {
+    // This will throw error if email exists
+    await apiFetch(`/users/verify?email=${data.email}`);
+    
+    // If we get here, email doesn't exist
+    const newRegistration = await apiFetch(`/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    
+    if (newRegistration) {
+      toast.success("Registration successful! Please log in.");
     }
-
-    console.log(data);
-    toast.success("Registration Successful!");
-  };
+  } catch (error) {
+    // Email exists
+    toast.error("Email already exists");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -29,7 +40,6 @@ const RegistrationPage = () => {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
           {/* Name */}
           <div>
             <label className="block font-medium mb-1">Name</label>
@@ -115,9 +125,7 @@ const RegistrationPage = () => {
               className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.password && (
-              <p className="text-red-500 text-sm">
-                {errors.password.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
             )}
           </div>
 
