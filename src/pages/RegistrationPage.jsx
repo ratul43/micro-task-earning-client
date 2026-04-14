@@ -8,6 +8,7 @@ const RegistrationPage = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -25,6 +26,7 @@ const RegistrationPage = () => {
     
     if (newRegistration) {
       toast.success("Registration successful! Please log in.");
+      reset();
     }
   } catch (error) {
     // Email exists
