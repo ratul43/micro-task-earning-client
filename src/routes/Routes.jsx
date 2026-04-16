@@ -20,6 +20,7 @@ import ManageUsers from "../components/admin/ManageUsers";
 import ManageTasks from "../components/admin/ManageTasks";
 import SimpleModal from "../elements/SimpleModal";
 import SubmissionReview from "../components/dashboard/buyers/SubmissionReview";
+import BuyerStates from "../components/dashboard/buyers/BuyerStates";
 
 export const router = createBrowserRouter([
   {
@@ -70,6 +71,12 @@ export const router = createBrowserRouter([
 
           </WorkerStats>
         </div>
+      },
+      {
+        path: "buyer-states",
+        element: <BuyerStates>
+          
+        </BuyerStates>
       },
       {
         path: "approved-submissions",
