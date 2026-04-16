@@ -3,6 +3,7 @@ Technologies used:
  - Express JS
  - NodeJs
  - Tailwind CSS
+ - Firebase
 
 Dependencies: 
  - Tailwind CSS
