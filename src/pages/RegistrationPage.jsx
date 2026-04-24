@@ -1,10 +1,15 @@
 // RegistrationPage.jsx
-import React from "react";
+import React, { use } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { apiFetch } from "../apiService";
+import { AuthContext } from './../context/AuthContext';
 
 const RegistrationPage = () => {
+
+  const {registerUser} = use(AuthContext)
+  // console.log(registerUser);
+
   const {
     register,
     handleSubmit,
@@ -13,25 +18,39 @@ const RegistrationPage = () => {
   } = useForm();
 
  const onSubmit = async (data) => {
-  try {
+  // console.log(data);
+
     // This will throw error if email exists
-    await apiFetch(`/users/verify?email=${data.email}`);
-    
-    // If we get here, email doesn't exist
-    const newRegistration = await apiFetch(`/users`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    
-    if (newRegistration) {
-      toast.success("Registration successful! Please log in.");
-      reset();
+    const verificationResult = await apiFetch(`/users/verify?email=${data.email}`);
+
+    if(verificationResult.exists){
+      toast.error("Email already exists");
+      return;
     }
-  } catch (error) {
-    // Email exists
-    toast.error("Email already exists");
-  }
+
+    // console.log(data);
+
+    await registerUser(data.email, data.password)
+      .then((res)=>{
+          toast.success("Registration successful");
+          reset();
+          return apiFetch("/users", {
+            method: "POST",
+            body: JSON.stringify({
+              name: data.name,
+              email: data.email,
+              photo: data.photo,
+              role: data.role
+            })
+          })
+      })
+      .catch((error)=>{
+          toast.error("Something wrong");
+          return;
+      })
+    
+   
+  
 };
 
   return (
