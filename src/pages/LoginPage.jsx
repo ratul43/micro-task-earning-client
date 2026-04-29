@@ -1,8 +1,14 @@
 // LoginPage.jsx
-import React from "react";
+import React, { use } from "react";
 import { useForm } from "react-hook-form";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
+
+  const {signInUser} = use(AuthContext)
+  // console.log(signInUser);
+
   const {
     register,
     handleSubmit,
@@ -10,7 +16,15 @@ const LoginPage = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data); // you will handle login later
+    // console.log(data); // you will handle login later
+    signInUser(data.email, data.password)
+      .then((res)=>{
+          // console.log(res);
+          toast.success("Login successful");
+      })
+      .catch((error)=>{
+          toast.error(error.message);
+      })
   };
 
   return (
