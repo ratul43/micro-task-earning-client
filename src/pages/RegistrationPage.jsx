@@ -3,11 +3,10 @@ import React, { use } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { apiFetch } from "../apiService";
-import { AuthContext } from './../context/AuthContext';
+import { AuthContext } from "./../context/AuthContext";
 
 const RegistrationPage = () => {
-
-  const {registerUser} = use(AuthContext)
+  const { registerUser, updateUserProfile } = use(AuthContext);
   // console.log(registerUser);
 
   const {
@@ -17,41 +16,52 @@ const RegistrationPage = () => {
     formState: { errors },
   } = useForm();
 
- const onSubmit = async (data) => {
-  // console.log(data);
-
-    // This will throw error if email exists
-    const verificationResult = await apiFetch(`/users/verify?email=${data.email}`);
-
-    if(verificationResult.exists){
-      toast.error("Email already exists");
-      return;
-    }
-
+  const onSubmit = async (data) => {
     // console.log(data);
 
-    await registerUser(data.email, data.password)
-      .then((res)=>{
-          toast.success("Registration successful");
-          reset();
-          return apiFetch("/users", {
-            method: "POST",
-            body: JSON.stringify({
-              name: data.name,
-              email: data.email,
-              photo: data.photo,
-              role: data.role
-            })
-          })
-      })
-      .catch((error)=>{
-          toast.error("Something wrong");
-          return;
-      })
-    
-   
-  
-};
+    // This will throw error if email exists
+    try {
+      const verificationResult = await apiFetch(
+        `/users/verify?email=${data.email}`,
+      );
+
+      if (verificationResult.exists) {
+        toast.error("Email already exists");
+        return;
+      }
+
+      // Register user
+      const res = await registerUser(data.email, data.password);
+
+      // Update profile
+      const userProfile = {
+        displayName: data.name,
+        photoURL: data?.photo || "https://i.sstatic.net/l60Hf.png",
+      };
+
+    const update =  await updateUserProfile(userProfile);
+    console.log(update);
+
+      // Save user in database
+
+      await apiFetch("/users", {
+        method: "POST",
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          photo: data.photo,
+          role: data.role,
+        }),
+      });
+
+      toast.success("Registration successful");
+      reset();
+
+      console.log(res);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
