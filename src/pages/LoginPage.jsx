@@ -3,11 +3,14 @@ import React, { use } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 const LoginPage = () => {
 
-  const {signInUser} = use(AuthContext)
+  const {signInUser, signInGoogle} = use(AuthContext)
   // console.log(signInUser);
+
+  const navigate = useNavigate()
 
   const {
     register,
@@ -21,11 +24,26 @@ const LoginPage = () => {
       .then((res)=>{
           // console.log(res);
           toast.success("Login successful");
+          window.location.href = "/"; // Redirect to home page after successful login
       })
       .catch((error)=>{
           toast.error(error.message);
       })
   };
+
+  const handleGoogleSignIn = () => {
+    signInGoogle()
+      .then((res)=>{
+          // console.log(res);
+          toast.success("Google Sign-In successful");
+          // window.location.href = "/"; // Redirect to home page after successful login
+          navigate("/")
+      })
+      .catch((error)=>{
+          toast.error(error.message);
+      })
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -103,7 +121,7 @@ const LoginPage = () => {
         </div>
 
         {/* Google Sign In (UI Only) */}
-        <button
+        <button onClick={handleGoogleSignIn}
           type="button"
           className="w-full flex items-center justify-center gap-3 border py-2 rounded-md hover:bg-gray-50 transition"
         >
