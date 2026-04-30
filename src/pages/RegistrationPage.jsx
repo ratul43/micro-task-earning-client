@@ -4,10 +4,13 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { apiFetch } from "../apiService";
 import { AuthContext } from "./../context/AuthContext";
+import { useNavigate } from "react-router";
 
 const RegistrationPage = () => {
   const { registerUser, updateUserProfile } = use(AuthContext);
   // console.log(registerUser);
+
+  const navigate = useNavigate()
 
   const {
     register,
@@ -40,7 +43,7 @@ const RegistrationPage = () => {
       };
 
     const update =  await updateUserProfile(userProfile);
-    console.log(update);
+    // console.log(update);
 
       // Save user in database
 
@@ -56,8 +59,9 @@ const RegistrationPage = () => {
 
       toast.success("Registration successful");
       reset();
-
-      console.log(res);
+      
+      // console.log(res);
+      navigate("/login")
     } catch (error) {
       toast.error(error.message);
     }

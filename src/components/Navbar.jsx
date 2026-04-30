@@ -1,8 +1,12 @@
 // NavbarUI.jsx
-import React from "react";
+import React, { use } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import AccountDropdown from "../elements/AccountDropdown";
 
-const NavbarUI = ({ isLoggedIn = false, username = "User", coins = 0 }) => {
+const NavbarUI = ({ username = "User", coins = 0 }) => {
+  const { user } = use(AuthContext);
+  console.log(user);
   return (
     <nav className="bg-blue-600 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,22 +20,36 @@ const NavbarUI = ({ isLoggedIn = false, username = "User", coins = 0 }) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-6">
-            {!isLoggedIn ? (
+            {!user ? (
               <>
-                <Link to={"/login"} className="hover:text-gray-200 font-medium">Login</Link>
-                <Link to={"/register"} className="hover:text-gray-200 font-medium">Register</Link>
+                <Link to={"/login"} className="hover:text-gray-200 font-medium">
+                  Login
+                </Link>
+                <Link
+                  to={"/register"}
+                  className="hover:text-gray-200 font-medium"
+                >
+                  Register
+                </Link>
                 <Link className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
                   Join as Developer
                 </Link>
               </>
             ) : (
               <>
-                <Link className="hover:text-gray-200 font-medium">Dashboard</Link>
+                <Link className="hover:text-gray-200 font-medium">
+                  Dashboard
+                </Link>
                 <span className="bg-blue-500 px-3 py-1 rounded-md font-semibold">
                   Coins: {coins}
                 </span>
                 <div className="flex items-center space-x-4">
-                  <a className="hover:text-gray-200 font-medium">{username}</a>
+                  <div className="hover:text-gray-200 font-medium">
+      
+              <AccountDropdown/> 
+
+
+                  </div>
                   <button className="bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition">
                     Logout
                   </button>
@@ -55,7 +73,7 @@ const NavbarUI = ({ isLoggedIn = false, username = "User", coins = 0 }) => {
 
         {/* Mobile Menu (UI Only) */}
         <div className="md:hidden mt-2 space-y-2">
-          {!isLoggedIn ? (
+          {!user ? (
             <>
               <a className="block hover:text-gray-200 font-medium">Login</a>
               <a className="block hover:text-gray-200 font-medium">Register</a>
@@ -69,7 +87,9 @@ const NavbarUI = ({ isLoggedIn = false, username = "User", coins = 0 }) => {
               <span className="block bg-blue-500 px-3 py-1 rounded-md font-semibold">
                 Coins: {coins}
               </span>
-              <a className="block hover:text-gray-200 font-medium">{username}</a>
+              <a className="block hover:text-gray-200 font-medium">
+                  <AccountDropdown/>
+              </a>
               <button className="block bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition">
                 Logout
               </button>

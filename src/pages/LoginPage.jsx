@@ -3,7 +3,7 @@ import React, { use } from "react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const LoginPage = () => {
 
@@ -136,9 +136,12 @@ const LoginPage = () => {
         {/* Register Redirect */}
         <p className="text-center text-sm text-gray-600 mt-6">
           Don’t have an account?{" "}
+          <Link to="/register">
           <span className="text-blue-600 font-medium cursor-pointer hover:underline">
             Register
           </span>
+          </Link>
+          
         </p>
       </div>
     </div>
