@@ -1,13 +1,27 @@
 // NavbarUI.jsx
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import AccountDropdown from "../elements/AccountDropdown";
 import { toast } from "react-toastify";
+import { apiFetch } from "../apiService";
 
-const NavbarUI = ({ username = "User", coins = 0 }) => {
+const NavbarUI = () => {
   const { user, logOut } = use(AuthContext);
   // console.log(user);
+
+  const [coins, setCoins] = useState();
+
+  useEffect(() => {
+    (async () => {
+      await apiFetch(`/users/email?email=${user?.email || ""}`)
+      .then((data) => {
+        setCoins(data?.coins || 0);
+        // console.log(data);
+      });
+    })();
+  }, [user?.email]);
+  // console.log(coins);
 
   const handleLogout = async () => {
     try {

@@ -54,6 +54,7 @@ const RegistrationPage = () => {
           email: data.email,
           photo: data.photo,
           role: data.role,
+          coins: `${data.role === "buyer" ? 50 : 10}`, // Give buyers some starting coins
         }),
       });
 
