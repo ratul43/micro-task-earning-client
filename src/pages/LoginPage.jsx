@@ -24,7 +24,7 @@ const LoginPage = () => {
       .then((res)=>{
           // console.log(res);
           toast.success("Login successful");
-          window.location.href = "/"; // Redirect to home page after successful login
+          navigate("/");
       })
       .catch((error)=>{
           toast.error(error.message);

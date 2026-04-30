@@ -3,10 +3,22 @@ import React, { use } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import AccountDropdown from "../elements/AccountDropdown";
+import { toast } from "react-toastify";
 
 const NavbarUI = ({ username = "User", coins = 0 }) => {
-  const { user } = use(AuthContext);
-  console.log(user);
+  const { user, logOut } = use(AuthContext);
+  // console.log(user);
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      toast.success("Logged out successfully!");
+    } catch (error) {
+      // console.error("Logout failed:", error);
+      toast.error(error.message || "Logout failed. Please try again.");
+    }
+  };
+
   return (
     <nav className="bg-blue-600 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,12 +57,12 @@ const NavbarUI = ({ username = "User", coins = 0 }) => {
                 </span>
                 <div className="flex items-center space-x-4">
                   <div className="hover:text-gray-200 font-medium">
-      
-              <AccountDropdown/> 
-
-
+                    <AccountDropdown />
                   </div>
-                  <button className="bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition">
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition"
+                  >
                     Logout
                   </button>
                 </div>
@@ -88,7 +100,7 @@ const NavbarUI = ({ username = "User", coins = 0 }) => {
                 Coins: {coins}
               </span>
               <a className="block hover:text-gray-200 font-medium">
-                  <AccountDropdown/>
+                <AccountDropdown />
               </a>
               <button className="block bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition">
                 Logout
