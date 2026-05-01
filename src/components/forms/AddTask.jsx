@@ -1,9 +1,13 @@
-import React from "react";
+import React, { use } from "react";
 import { useForm } from "react-hook-form";
 import { apiFetch } from "../../apiService";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
 
 const AddTask = ({ availableCoins = 200 }) => {
+  const {user} = use(AuthContext)
+  // console.log(user?.email);
+
   const { register, handleSubmit, watch, reset, formState: {errors} } = useForm();
 
   const requiredWorkers = watch("required_workers") || 0;
@@ -18,14 +22,17 @@ const AddTask = ({ availableCoins = 200 }) => {
       window.location.href = "/purchase-coins"; // redirect
       return;
     }
+    else{
+      return; // Stop form submission
+    }
   }
     
 
     try {
-      const response = await apiFetch("/tasks", {
+      await apiFetch("/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({...data, totalCost}),
+        body: JSON.stringify({...data, totalCost, buyer_email: `${user?.email}`}),
         // buyer name, buyer_email,  
       });
 
@@ -37,7 +44,7 @@ const AddTask = ({ availableCoins = 200 }) => {
 
     } 
     catch (err) {
-      console.error("Error adding task:", err);
+      console.error("Error adding task:", err.message);
     }
   };
 
