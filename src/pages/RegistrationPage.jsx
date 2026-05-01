@@ -34,7 +34,7 @@ const RegistrationPage = () => {
       }
 
       // Register user
-      const res = await registerUser(data.email, data.password);
+      await registerUser(data.email, data.password);
 
       // Update profile
       const userProfile = {
@@ -42,7 +42,7 @@ const RegistrationPage = () => {
         photoURL: data?.photo || "https://i.sstatic.net/l60Hf.png",
       };
 
-    const update =  await updateUserProfile(userProfile);
+    await updateUserProfile(userProfile);
     // console.log(update);
 
       // Save user in database
@@ -62,7 +62,7 @@ const RegistrationPage = () => {
       reset();
       
       // console.log(res);
-      navigate("/login")
+      navigate("/")
     } catch (error) {
       toast.error(error.message);
     }
