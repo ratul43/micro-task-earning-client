@@ -1,9 +1,11 @@
 // MyTasks.jsx
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiService";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const AddedTasks = () => {
+  const {user} = use(AuthContext)
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -17,10 +19,10 @@ const AddedTasks = () => {
 
   useEffect(() => {
     (async () => {
-      const mainData = await apiFetch(`/tasks`);
+      const mainData = await apiFetch(`/tasks?buyer_email=${user?.email}`);
       setTasks(mainData);
     })();
-  }, []);
+  }, [user?.email]);
 
   console.log(tasks);
 
