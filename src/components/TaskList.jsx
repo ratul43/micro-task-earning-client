@@ -8,7 +8,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([])
   useEffect(()=>{
     (async() => {
-      await apiFetch(`/tasks`)
+      await apiFetch(`/allTasks`)
       .then(data => setTasks(data))
     })();
   }, [])

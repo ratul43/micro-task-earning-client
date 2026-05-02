@@ -24,7 +24,7 @@ const AddedTasks = () => {
     })();
   }, [user?.email]);
 
-  console.log(tasks);
+  // console.log(tasks);
 
   const deleteOperation = async (taskId) => {
     try{
