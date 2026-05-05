@@ -6,16 +6,27 @@ import { AuthContext } from './../../../context/AuthContext';
 const BuyerStates = () => {
   const {user} = use(AuthContext);
   const [taskCount, setTaskCount] = useState(0);
+  const [workerCount, setWorkerCount] = useState(0);
   useEffect(()=>{
+    if(!user?.email) return;
     (async()=>{
       await apiFetch(`/tasks/count?email=${user.email}`)
       .then(data => setTaskCount(data.count))
     })()
   }, [user?.email])
+
+  useEffect(()=>{
+    if(!user?.email) return;
+    (async()=>{
+      await apiFetch(`/tasks/worker-count?email=${user.email}`)
+      .then(data => setWorkerCount(data.totalWorkerNeeded))
+    })()
+  }, [user?.email])
+
   
   const stats = {
     totalTasks: taskCount,
-    pendingTasks: 180, // sum of required_workers
+    pendingTasks: workerCount, // sum of required_workers
     totalPayments: 950, // in coins or $ (your choice)
   };
 
