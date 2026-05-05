@@ -24,20 +24,31 @@ const AddedTasks = () => {
     })();
   }, [user?.email]);
 
+
+
   // console.log(tasks);
 
   const deleteOperation = async (taskId) => {
-    try{
-      const response = await apiFetch(`/tasks?id=${taskId}`)
-      if(response){
-        setTasks(prev => prev.filter(task => task._id !== taskId))
-        toast.success("Task Deleted Successfully")
-      }
-    }
-    catch(err){
+    console.log(taskId);
+    try {
+        // Use DELETE method instead of GET
+        const response = await apiFetch(`/tasks?id=${taskId}`, {
+            method: 'DELETE'
+        });
+        
+        console.log(response);
+
+        if (response) {
+            setTasks(prev => prev.filter(task => task._id !== taskId));
+            toast.success("Task Deleted Successfully");
+        } else {
+            toast.error("Failed to delete task");
+        }
+    } catch(err) {
         console.error("Error deleting task:", err);
+        toast.error("An error occurred while deleting");
     }
-  }
+}
 
   const openUpdateModal = (task) => {
     setSelectedTask(task);

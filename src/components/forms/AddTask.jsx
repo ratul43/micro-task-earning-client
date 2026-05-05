@@ -82,17 +82,24 @@ const AddTask = ({ availableCoins = 200 }) => {
 
         {/* Workers */}
         <div>
-          <label className="block font-medium mb-1">Required Workers</label>
-          <input
-            type="number"
-            placeholder="Required Workers (e.g. 100)"
-            {...register("required_workers", { required: "Required workers is required" })}
-            className="w-full border p-2 rounded"
-          />
-          {errors.required_workers && (
-            <p className="text-red-500 text-sm">{errors.required_workers.message}</p>
-          )}
-        </div>
+  <label className="block font-medium mb-1">Required Workers</label>
+  <input
+    type="number"
+    placeholder="Required Workers (e.g. 100)"
+    {...register("required_workers", { 
+      required: "Required workers is required",
+      valueAsNumber: true,  // 👈 Converts string to number
+      min: {
+        value: 1,
+        message: "Must be at least 1 worker"
+      }
+    })}
+    className="w-full border p-2 rounded"
+  />
+  {errors.required_workers && (
+    <p className="text-red-500 text-sm">{errors.required_workers.message}</p>
+  )}
+</div>
 
         {/* Payable Amount */}
         <div>
