@@ -1,9 +1,20 @@
 // BuyerStates.jsx
-import React from "react";
+import React, { use, useEffect, useState } from "react";
+import { apiFetch } from "../../../apiService";
+import { AuthContext } from './../../../context/AuthContext';
 
 const BuyerStates = () => {
+  const {user} = use(AuthContext);
+  const [taskCount, setTaskCount] = useState(0);
+  useEffect(()=>{
+    (async()=>{
+      await apiFetch(`/tasks/count?email=${user.email}`)
+      .then(data => setTaskCount(data.count))
+    })()
+  }, [user?.email])
+  
   const stats = {
-    totalTasks: 25,
+    totalTasks: taskCount,
     pendingTasks: 180, // sum of required_workers
     totalPayments: 950, // in coins or $ (your choice)
   };
