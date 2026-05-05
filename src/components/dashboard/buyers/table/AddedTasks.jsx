@@ -19,7 +19,7 @@ const AddedTasks = () => {
 
   useEffect(() => {
     (async () => {
-      const mainData = await apiFetch(`/tasks?buyer_email=${user?.email}`);
+      const mainData = await apiFetch(`/tasks?email=${user?.email}`);
       setTasks(mainData);
     })();
   }, [user?.email]);
