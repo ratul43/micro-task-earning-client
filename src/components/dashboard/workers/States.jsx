@@ -1,10 +1,40 @@
 // WorkerStats.jsx
-import React from "react";
+import React, { use, useEffect, useState } from "react";
+import { apiFetch } from "../../../apiService";
+import { AuthContext } from "../../../context/AuthContext";
 
 const WorkerStats = () => {
+
+  const [submission, setSubmission] = useState()
+  const [pending, setPending] = useState()
+
+  const {user} = use(AuthContext)
+
+  useEffect(()=>{
+
+    if(!user?.email) return;
+
+    (async()=> {
+      await apiFetch(`/tasks/submit/count?email=${user?.email}`)
+        .then(data => setSubmission(data.count))
+    })()
+
+  }, [user?.email])
+
+  useEffect(()=>{
+
+    if(!user?.email) return; 
+    (async()=> {
+      await apiFetch(`/tasks/submit/pending/count?email=${user?.email}`)
+        .then(data => setPending(data.count))
+    })()
+
+  }, [user?.email])
+
+
   const stats = {
-    totalSubmissions: 120,
-    pendingSubmissions: 25,
+    totalSubmissions: submission || 0,
+    pendingSubmissions: pending || 0,
     totalEarnings: 850,
   };
 

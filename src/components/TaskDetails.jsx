@@ -37,6 +37,7 @@ const TaskDetails = () => {
       submission_details: data.submission_details,
       submission_date: new Date().toISOString(),
       status: "pending",
+      createdAt: new Date().toISOString(),
     };
 
     // console.log(submissionData);
