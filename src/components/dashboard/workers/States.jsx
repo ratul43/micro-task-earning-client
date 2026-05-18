@@ -7,6 +7,7 @@ const WorkerStats = () => {
 
   const [submission, setSubmission] = useState()
   const [pending, setPending] = useState()
+  const [earnings, setEarnings] = useState()
 
   const {user} = use(AuthContext)
 
@@ -25,17 +26,28 @@ const WorkerStats = () => {
 
     if(!user?.email) return; 
     (async()=> {
-      await apiFetch(`/tasks/submit/pending/count?email=${user?.email}`)
-        .then(data => setPending(data.count))
+      await apiFetch(`/tasks/submit/status-count?email=${user?.email}`)
+        .then(data => setPending(data.pendingCount))
     })()
 
+  }, [user?.email])
+
+
+  useEffect(()=>{
+    (()=>{
+      if(!user?.email) return;
+      (async()=>{
+        await apiFetch(`/total-earning?email=${user?.email}`)
+        .then(data => setEarnings(data.totalEarning))
+      })()
+    })()
   }, [user?.email])
 
 
   const stats = {
     totalSubmissions: submission || 0,
     pendingSubmissions: pending || 0,
-    totalEarnings: 850,
+    totalEarnings: earnings || 0, 
   };
 
   return (

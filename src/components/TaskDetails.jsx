@@ -1,11 +1,13 @@
 // TaskDetails.jsx
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { apiFetch } from "../apiService";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 const TaskDetails = () => {
+  const {user} = use(AuthContext)
   const { register, handleSubmit, reset } = useForm();
   const {taskId} = useParams()
   const [task, setTask] = useState({})
@@ -21,8 +23,8 @@ const TaskDetails = () => {
 
   // Dummy Worker Info (replace later)
   const worker = {
-    worker_name: "Your Name",
-    worker_email: "worker@example.com",
+    worker_name:  user?.displayName || "not found",
+    worker_email: user?.email || "not found",
   };
 
   const onSubmit = async (data) => {

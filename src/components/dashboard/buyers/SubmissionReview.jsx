@@ -31,6 +31,7 @@ const SubmissionReview = () => {
         )
       );
       toast.success("Submission approved successfully!");
+
       // Close modal if it's open for this submission
       if (selectedSubmission?._id === id) {
         setSelectedSubmission(null);
