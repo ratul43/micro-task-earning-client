@@ -21,6 +21,8 @@ import ManageTasks from "../components/admin/ManageTasks";
 import SimpleModal from "../elements/SimpleModal";
 import SubmissionReview from "../components/dashboard/buyers/SubmissionReview";
 import BuyerStates from "../components/dashboard/buyers/BuyerStates";
+import StripeCheckoutPage from './../pages/payment/StripeCheckoutPage';
+import CheckoutForm from './../pages/payment/CheckoutForm';
 
 export const router = createBrowserRouter([
   {
@@ -149,6 +151,14 @@ export const router = createBrowserRouter([
   {
     path: "/test",
     element: <SimpleModal />
+  },
+  {
+    path: "/payment-request",
+    element: <StripeCheckoutPage />
+  },
+  {
+    path: "/stripe",
+    element: <StripeCheckoutPage />
   }
   
 ]);
