@@ -21,6 +21,7 @@ import ManageTasks from "../components/admin/ManageTasks";
 import SimpleModal from "../elements/SimpleModal";
 import SubmissionReview from "../components/dashboard/buyers/SubmissionReview";
 import BuyerStates from "../components/dashboard/buyers/BuyerStates";
+import PaymentHistory from "../components/dashboard/buyers/PaymentHistory";
 import StripeCheckoutPage from './../pages/payment/StripeCheckoutPage';
 import CheckoutForm from './../pages/payment/CheckoutForm';
 
@@ -134,12 +135,17 @@ export const router = createBrowserRouter([
      <ManageUsers />
     </div>
   },
-  {
-    path: "manage-tasks",
-    element: <div>
-      <ManageTasks />
-      </div>
-  }
+
+      {
+        path: "payment-history",
+        element: <PaymentHistory />
+      },
+      {
+        path: "manage-tasks",
+        element: <div>
+          <ManageTasks />
+          </div>
+      }
 
      
     ]
