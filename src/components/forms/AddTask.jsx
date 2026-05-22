@@ -55,6 +55,19 @@ const AddTask = () => {
         // buyer name, buyer_email,  
       });
 
+      // Deduct coins from buyer's account
+      await apiFetch("/users/coins", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user?.email,
+          coins: -totalCost, // Negative to deduct
+        }),
+      });
+
+      // Update local state
+      setAvailableCoins((prev) => prev - totalCost);
+
       // console.log(response);
 
       toast.success("Task Added Successfully");
@@ -64,6 +77,7 @@ const AddTask = () => {
     } 
     catch (err) {
       console.error("Error adding task:", err.message);
+      toast.error("Failed to add task. Please try again.");
     }
   };
 
