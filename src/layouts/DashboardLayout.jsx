@@ -42,6 +42,10 @@ const DashboardLayout = () => {
   const latestNotification =
     userData?.latestNotification || notifications[0] || null;
 
+  const isAdmin = userRole === "admin";
+  const isWorker = userRole === "worker";
+  const isBuyer = userRole === "buyer";
+
   return (
     <div className="flex h-screen bg-gray-100">
       
@@ -59,33 +63,45 @@ const DashboardLayout = () => {
           <Link to="/dashboard" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Home
           </Link>
-          <Link to="/dashboard/states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-           Worker States
-          </Link>
 
-          <Link to="/dashboard/buyer-states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-           Buyer States
-          </Link>
+          {(isWorker || isAdmin) && (
+            <Link to="/dashboard/states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+              Worker States
+            </Link>
+          )}
 
-          <Link to="/dashboard/admin" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-           Admin States
-          </Link>
+          {(isBuyer || isAdmin) && (
+            <Link to="/dashboard/buyer-states" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+              Buyer States
+            </Link>
+          )}
 
-          <Link to="/dashboard/submissions-review" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-           Submissions Review 
-          </Link>
+          {isAdmin && (
+            <Link to="/dashboard/admin" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+              Admin States
+            </Link>
+          )}
+
+          {isBuyer && (
+            <Link to="/dashboard/submissions-review" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+              Submissions Review
+            </Link>
+          )}
 
           <Link to="/dashboard/approved-submissions" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Approved Submission 
+            Approved Submission
           </Link>
 
-          <Link to="/dashboard/add-task" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Add New Task
-          </Link>
-
-          <Link to="/dashboard/added-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Added Tasks
-          </Link>
+          {(isBuyer || isAdmin) && (
+            <>
+              <Link to="/dashboard/add-task" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                Add New Task
+              </Link>
+              <Link to="/dashboard/added-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                Added Tasks
+              </Link>
+            </>
+          )}
 
           <Link to="/dashboard/tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
             Task List
@@ -102,13 +118,16 @@ const DashboardLayout = () => {
             Withdraw Request
           </Link>
 
-          <Link to="/dashboard/manage-users" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Manage Users
-          </Link>
-
-          <Link to="/dashboard/manage-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Manage Tasks
-          </Link>
+          {isAdmin && (
+            <>
+              <Link to="/dashboard/manage-users" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                Manage Users
+              </Link>
+              <Link to="/dashboard/manage-tasks" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                Manage Tasks
+              </Link>
+            </>
+          )}
 
         </nav>
       </div>

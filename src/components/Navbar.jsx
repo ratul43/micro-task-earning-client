@@ -63,7 +63,7 @@ const NavbarUI = () => {
               </>
             ) : (
               <>
-                <Link className="hover:text-gray-200 font-medium">
+                <Link to="/dashboard" className="hover:text-gray-200 font-medium">
                   Dashboard
                 </Link>
                 <span className="bg-blue-500 px-3 py-1 rounded-md font-semibold">
