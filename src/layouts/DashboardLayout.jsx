@@ -8,6 +8,7 @@ import { apiFetch } from "../apiService";
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -35,6 +36,11 @@ const DashboardLayout = () => {
   const coins = Number(userData?.coins ?? 0);
   const userPhoto =
     userData?.photoURL || user?.photoURL || "https://i.sstatic.net/l60Hf.png";
+  const notifications = Array.isArray(userData?.notifications)
+    ? userData.notifications
+    : [];
+  const latestNotification =
+    userData?.latestNotification || notifications[0] || null;
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -119,7 +125,7 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col">
         
         {/* Top Navbar */}
-        <div className="flex items-center justify-between bg-white shadow px-4 py-3">
+        <div className="relative flex items-center justify-between bg-white shadow px-4 py-3">
           
           {/* Hamburger */}
           <button
@@ -138,6 +144,47 @@ const DashboardLayout = () => {
 
           {/* User Info */}
           <div className="flex items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications((prev) => !prev)}
+                className="relative p-2 rounded-full hover:bg-blue-100 text-blue-600 transition"
+                aria-label="Notifications"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {notifications.length > 0 && (
+                  <span className="absolute top-0 right-0 inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                )}
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 rounded-2xl border border-gray-200 bg-white shadow-xl ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <h2 className="text-sm font-semibold text-gray-900">Latest Notification</h2>
+                  </div>
+                  <div className="p-4">
+                    {latestNotification ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-700">{latestNotification.message || latestNotification.title || latestNotification}</p>
+                        {latestNotification.date && (
+                          <p className="text-xs text-gray-400">{new Date(latestNotification.date).toLocaleString()}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No new notifications.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-col items-end text-right">
               <span className="text-sm font-semibold text-gray-700">{displayName}</span>
               <span className="text-xs text-gray-500">{userRole?.toUpperCase()}</span>
