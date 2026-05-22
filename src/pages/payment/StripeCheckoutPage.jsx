@@ -3,9 +3,10 @@ import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { apiFetch } from "../../apiService";
 
 const packageOptions = [
-  { id: "small", label: "100 Coins", coins: 100, amount: 1000, price: 10 },
-  { id: "medium", label: "500 Coins", coins: 500, amount: 4500, price: 45 },
-  { id: "large", label: "1000 Coins", coins: 1000, amount: 8000, price: 80 },
+  { id: "small", label: "10 Coins", coins: 10, amount: 100, price: 1 },
+  { id: "medium", label: "150 Coins", coins: 150, amount: 1000, price: 10 },
+  { id: "large", label: "500 Coins", coins: 500, amount: 2000, price: 20 },
+  { id: "xlarge", label: "1000 Coins", coins: 1000, amount: 3500, price: 35 },
 ];
 
 const StripeCheckoutPage = () => {
@@ -41,8 +42,8 @@ const StripeCheckoutPage = () => {
           amount: selectedPackage.amount,
           currency: "usd",
           coins: selectedPackage.coins,
-          success_url: `${window.location.origin}/purchase-coins`,
-          cancel_url: `${window.location.origin}/purchase-coins`,
+          success_url: `${window.location.origin}/purchase-coins?session_id={CHECKOUT_SESSION_ID}&package=${selectedPackage.id}`,
+          cancel_url: `${window.location.origin}/purchase-coins?canceled=true`,
         }),
       });
 

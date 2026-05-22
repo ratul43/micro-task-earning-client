@@ -153,6 +153,10 @@ export const router = createBrowserRouter([
     element: <SimpleModal />
   },
   {
+    path: "/stripe",
+    element: <StripeCheckoutPage />
+  },
+  {
     path: "/payment-request",
     element: <StripeCheckoutPage />
   }

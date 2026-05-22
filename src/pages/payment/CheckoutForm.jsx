@@ -3,9 +3,11 @@ import { useNavigate } from "react-router";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { apiFetch } from "../../apiService";
 import { AuthContext } from "../../context/AuthContext";
+import { UserDataContext } from "../../context/UserDataContext";
 
 const CheckoutForm = ({ amount, currency, coins }) => {
   const { user } = useContext(AuthContext);
+  const { fetchUserData } = useContext(UserDataContext);
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -52,6 +54,7 @@ const CheckoutForm = ({ amount, currency, coins }) => {
       }
 
       if (result.paymentIntent?.status === "succeeded") {
+        // Update buyer's coins
         const coinResult = await apiFetch("/users/coins", {
           method: "PATCH",
           body: JSON.stringify({
@@ -59,6 +62,23 @@ const CheckoutForm = ({ amount, currency, coins }) => {
             coins,
           }),
         });
+
+        // Save payment transaction
+        await apiFetch("/payments", {
+          method: "POST",
+          body: JSON.stringify({
+            email: user.email,
+            coins,
+            amount: amount / 100, // Convert from cents to dollars
+            currency,
+            paymentIntentId: result.paymentIntent.id,
+            status: "completed",
+            timestamp: new Date().toISOString(),
+          }),
+        });
+
+        // Refresh user data in context
+        await fetchUserData();
 
         setConfirmation(
           `Payment successful! You purchased ${coins} coins. Your balance has been updated to ${coinResult.coins} coins.`,
