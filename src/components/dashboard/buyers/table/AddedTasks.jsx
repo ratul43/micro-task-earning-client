@@ -1,11 +1,13 @@
 // MyTasks.jsx
-import React, { use, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiService";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
+import { UserDataContext } from "../../../../context/UserDataContext";
 
 const AddedTasks = () => {
   const {user} = use(AuthContext)
+  const { fetchUserData } = useContext(UserDataContext);
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -31,7 +33,16 @@ const AddedTasks = () => {
   const deleteOperation = async (taskId) => {
     console.log(taskId);
     try {
-        // Use DELETE method instead of GET
+        // Find the task to get the refund amount
+        const taskToDelete = tasks.find(task => task._id === taskId);
+        if (!taskToDelete) {
+            toast.error("Task not found");
+            return;
+        }
+
+        const refundAmount = taskToDelete.required_workers * taskToDelete.payable_amount;
+
+        // Delete the task
         const response = await apiFetch(`/tasks?id=${taskId}`, {
             method: 'DELETE'
         });
@@ -39,8 +50,21 @@ const AddedTasks = () => {
         console.log(response);
 
         if (response) {
+            // Refund the coins to buyer
+            await apiFetch("/users/coins", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: user?.email,
+                    coins: refundAmount, // Positive to add coins back
+                }),
+            });
+
             setTasks(prev => prev.filter(task => task._id !== taskId));
-            toast.success("Task Deleted Successfully");
+            toast.success(`Task Deleted Successfully! ${refundAmount} coins refunded.`);
+            
+            // Refresh user data to update coins in dashboard header
+            await fetchUserData();
         } else {
             toast.error("Failed to delete task");
         }

@@ -1,31 +1,15 @@
-import React, { use, useState, useEffect } from "react";
+import React, { use, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { apiFetch } from "../../apiService";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
+import { UserDataContext } from "../../context/UserDataContext";
 
 const AddTask = () => {
   const { user } = use(AuthContext);
-  const [availableCoins, setAvailableCoins] = useState(0);
+  const { userData, fetchUserData } = useContext(UserDataContext);
 
-  useEffect(() => {
-    const fetchAvailableCoins = async () => {
-      if (!user?.email) {
-        setAvailableCoins(0);
-        return;
-      }
-
-      try {
-        const data = await apiFetch(`/users/email?email=${encodeURIComponent(user.email)}`);
-        setAvailableCoins(Number(data?.coins ?? 0));
-      } catch (error) {
-        console.error("Failed to fetch available coins:", error);
-        setAvailableCoins(0);
-      }
-    };
-
-    fetchAvailableCoins();
-  }, [user?.email]);
+  const availableCoins = Number(userData?.coins ?? 0);
 
   const { register, handleSubmit, watch, reset, formState: {errors} } = useForm();
 
@@ -65,8 +49,8 @@ const AddTask = () => {
         }),
       });
 
-      // Update local state
-      setAvailableCoins((prev) => prev - totalCost);
+      // Refresh user data to update coins everywhere
+      await fetchUserData();
 
       // console.log(response);
 

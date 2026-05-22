@@ -1,34 +1,15 @@
 // DashboardLayout.jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Footer from "../components/Footer"; // adjust path if needed
 import { Link, Outlet } from "react-router";
 import { AuthContext } from "../context/AuthContext";
-import { apiFetch } from "../apiService";
+import { UserDataContext } from "../context/UserDataContext";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const { user } = useContext(AuthContext);
-
-  useEffect(() => {
-    const loadUserData = async () => {
-      if (!user?.email) {
-        setUserData(null);
-        return;
-      }
-
-      try {
-        const data = await apiFetch(`/users/email?email=${encodeURIComponent(user.email)}`);
-        setUserData(data || {});
-      } catch (error) {
-        console.error("Failed to load user data:", error);
-        setUserData({});
-      }
-    };
-
-    loadUserData();
-  }, [user?.email]);
+  const { userData } = useContext(UserDataContext);
 
   const displayName =
     userData?.displayName || user?.displayName || user?.email?.split("@")[0] || "Guest";
