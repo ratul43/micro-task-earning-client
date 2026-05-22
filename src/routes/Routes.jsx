@@ -155,10 +155,6 @@ export const router = createBrowserRouter([
   {
     path: "/payment-request",
     element: <StripeCheckoutPage />
-  },
-  {
-    path: "/stripe",
-    element: <StripeCheckoutPage />
   }
   
 ]);

@@ -10,6 +10,7 @@ const WorkerStats = () => {
   const [earnings, setEarnings] = useState()
 
   const {user} = use(AuthContext)
+  console.log(user);
 
   useEffect(()=>{
 

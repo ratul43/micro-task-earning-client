@@ -1,10 +1,40 @@
 // DashboardLayout.jsx
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Footer from "../components/Footer"; // adjust path if needed
 import { Link, Outlet } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import { apiFetch } from "../apiService";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!user?.email) {
+        setUserData(null);
+        return;
+      }
+
+      try {
+        const data = await apiFetch(`/users/email?email=${encodeURIComponent(user.email)}`);
+        setUserData(data || {});
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+        setUserData({});
+      }
+    };
+
+    loadUserData();
+  }, [user?.email]);
+
+  const displayName =
+    userData?.displayName || user?.displayName || user?.email?.split("@")[0] || "Guest";
+  const userRole = userData?.role || "buyer";
+  const coins = Number(userData?.coins ?? 0);
+  const userPhoto =
+    userData?.photoURL || user?.photoURL || "https://i.sstatic.net/l60Hf.png";
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -15,9 +45,9 @@ const DashboardLayout = () => {
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         md:translate-x-0 transition-transform duration-300`}
       >
-        <div className="p-5 text-2xl font-bold border-b border-blue-500">
+        <Link to="/" className="p-5 text-2xl font-bold border-b border-blue-500">
           MicroTasker
-        </div>
+        </Link>
 
         <nav className="p-4 space-y-2">
           <Link to="/dashboard" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
@@ -107,15 +137,17 @@ const DashboardLayout = () => {
           <h1 className="text-lg font-semibold">Dashboard</h1>
 
           {/* User Info */}
-          <div className="flex items-center gap-3">
-            <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm font-medium">
-              Coins: 120
-            </span>
-            <img
-              src="https://images.pexels.com/photos/5354069/pexels-photo-5354069.jpeg"
-              alt="user"
-              className="w-8 h-8 rounded-full"
-            />
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-end text-right">
+              <span className="text-sm font-semibold text-gray-700">{displayName}</span>
+              <span className="text-xs text-gray-500">{userRole?.toUpperCase()}</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-full bg-blue-50 px-3 py-2">
+              <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-sm font-medium">
+                Coins: {coins}
+              </span>
+              <img src={userPhoto} alt={displayName} className="w-10 h-10 rounded-full object-cover" />
+            </div>
           </div>
         </div>
 
