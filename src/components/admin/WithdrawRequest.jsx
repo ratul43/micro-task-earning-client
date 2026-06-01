@@ -8,15 +8,14 @@ const WithdrawRequest = () => {
   const [approving, setApproving] = useState(null);
 
   useEffect(() => {
-    fetchPendingWithdrawals();
+    fetchWithdrawals();
   }, []);
 
-  const fetchPendingWithdrawals = async () => {
+  const fetchWithdrawals = async () => {
     try {
       setLoading(true);
       const data = await apiFetch("/withdrawal");
-      const pending = data.filter((w) => w.status === "pending");
-      setWithdrawals(pending);
+      setWithdrawals(data);
     } catch (error) {
       console.error(error);
       toast.error("Failed to load withdrawal requests");
@@ -45,7 +44,12 @@ const WithdrawRequest = () => {
       });
 
       toast.success("Payment approved! User coins updated.");
-      fetchPendingWithdrawals();
+
+      setWithdrawals((prev) =>
+        prev.map((item) =>
+          item._id === withdrawal._id ? { ...item, status: "approved" } : item,
+        ),
+      );
     } catch (error) {
       console.error(error);
       toast.error("Failed to approve payment. Please try again.");
@@ -66,12 +70,12 @@ const WithdrawRequest = () => {
     <div className="bg-white shadow-md rounded-lg p-6">
       {/* Header */}
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        Withdraw Requests (Pending)
+        Withdraw Requests
       </h2>
 
       {/* Table */}
       {withdrawals.length === 0 ? (
-        <p className="text-gray-600 text-center py-4">No pending withdrawal requests.</p>
+        <p className="text-gray-600 text-center py-4">No withdrawal requests found.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 rounded-lg">
@@ -125,20 +129,29 @@ const WithdrawRequest = () => {
                     {new Date(withdrawal.withdraw_date).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-2">
-                    <span className="px-2 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded ${withdrawal.status === "approved" ? "text-green-700 bg-green-100" : "text-yellow-700 bg-yellow-100"}`}>
                       {withdrawal.status}
                     </span>
                   </td>
                   <td className="px-4 py-2">
-                    <button
-                      onClick={() => handlePaymentSuccess(withdrawal)}
-                      disabled={approving === withdrawal._id}
-                      className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
-                    >
-                      {approving === withdrawal._id
-                        ? "Processing..."
-                        : "Payment Success"}
-                    </button>
+                    {withdrawal.status === "approved" ? (
+                      <button
+                        disabled
+                        className="px-3 py-1 text-sm text-white bg-gray-400 rounded cursor-not-allowed"
+                      >
+                        Approved
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handlePaymentSuccess(withdrawal)}
+                        disabled={approving === withdrawal._id}
+                        className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
+                      >
+                        {approving === withdrawal._id
+                          ? "Processing..."
+                          : "Payment Success"}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
