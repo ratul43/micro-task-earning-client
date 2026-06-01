@@ -1,5 +1,5 @@
 // WorkerStats.jsx
-import React, { use, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { apiFetch } from "../../../apiService";
 import { AuthContext } from "../../../context/AuthContext";
 
@@ -9,8 +9,7 @@ const WorkerStats = () => {
   const [pending, setPending] = useState()
   const [earnings, setEarnings] = useState()
 
-  const {user} = use(AuthContext)
-  console.log(user);
+  const { user } = useContext(AuthContext);
 
   useEffect(()=>{
 

@@ -1,4 +1,3 @@
-// BuyerPendingSubmissions.jsx
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../../../apiService";
 import { toast } from "react-toastify";
@@ -17,27 +16,50 @@ const SubmissionReview = () => {
 //   console.log(submissions);
 
   const updateStatus = async (id) => {
-    const res = await apiFetch(`/tasks/submit/review/${id}`, {
-      method: "PUT",
-    });
+    try {
+      const res = await apiFetch(`/tasks/submit/review/${id}`, {
+        method: "PUT",
+      });
 
-    if(res){
-      // Update the submission status in the local state without reloading
-      setSubmissions(prevSubmissions => 
-        prevSubmissions.map(submission => 
-          submission._id === id 
-            ? { ...submission, status: "approved" }
-            : submission
-        )
-      );
-      toast.success("Submission approved successfully!");
+      if (res) {
+        const submissionInfo = await apiFetch(`/tasks/submit`, {
+          method: "PUT",
+          body: JSON.stringify({ id }),
+        });
 
-      // Close modal if it's open for this submission
-      if (selectedSubmission?._id === id) {
-        setSelectedSubmission(null);
+        if (submissionInfo?.worker_email) {
+          await apiFetch(`/users`, {
+            method: "PUT",
+            body: JSON.stringify({
+              email: submissionInfo.worker_email,
+              coins: submissionInfo.payable_amount,
+            }),
+          });
+        }
+
+        // Update the submission status in the local state without reloading
+        setSubmissions(prevSubmissions =>
+          prevSubmissions.map(submission =>
+            submission._id === id ? { ...submission, status: "approved" } : submission
+          )
+        );
+
+        toast.success(
+          submissionInfo?.payable_amount !== undefined
+            ? `Submission approved — worker awarded ${submissionInfo.payable_amount} coins.`
+            : "Submission approved successfully!"
+        );
+
+        // Close modal if it's open for this submission
+        if (selectedSubmission?._id === id) {
+          setSelectedSubmission(null);
+        }
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to approve submission.");
     }
-  }
+  };
 
   const deleteTask = async (id) => {
     const res = await apiFetch(`/tasks/submit?id=${id}`, {
