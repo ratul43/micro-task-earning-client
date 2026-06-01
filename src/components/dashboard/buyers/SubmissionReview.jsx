@@ -62,20 +62,25 @@ const SubmissionReview = () => {
   };
 
   const deleteTask = async (id) => {
-    const res = await apiFetch(`/tasks/submit?id=${id}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await apiFetch(`/tasks/submit/reject/${id}`, {
+        method: "PUT",
+      });
 
-    if(res){
-      // Remove the submission from local state without reloading
-      setSubmissions(prevSubmissions => 
-        prevSubmissions.filter(submission => submission._id !== id)
-      );
-      toast.success("Submission rejected successfully!");
-      // Close modal if it's open for this submission
-      if (selectedSubmission?._id === id) {
-        setSelectedSubmission(null);
+      if (res) {
+        // Remove the submission from local state without reloading
+        setSubmissions(prevSubmissions => 
+          prevSubmissions.filter(submission => submission._id !== id)
+        );
+        toast.success("Submission rejected successfully!");
+        // Close modal if it's open for this submission
+        if (selectedSubmission?._id === id) {
+          setSelectedSubmission(null);
+        }
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to reject submission.");
     }
   };
 
