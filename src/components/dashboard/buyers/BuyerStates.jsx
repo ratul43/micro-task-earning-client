@@ -7,6 +7,8 @@ const BuyerStates = () => {
   const {user} = use(AuthContext);
   const [taskCount, setTaskCount] = useState(0);
   const [workerCount, setWorkerCount] = useState(0);
+  const [totalPayment, setTotalPayment] = useState(0);
+  
   useEffect(()=>{
     if(!user?.email) return;
     (async()=>{
@@ -23,11 +25,21 @@ const BuyerStates = () => {
     })()
   }, [user?.email])
 
-  
+  useEffect(()=>{
+    if(!user?.email) return;
+    (async()=>{
+      await apiFetch(`/tasks?email=${user.email}`)
+      .then(data => {
+        const total = data.reduce((sum, task) => sum + (task.totalCost || 0), 0);
+        setTotalPayment(total);
+      })
+    })()
+  }, [user?.email])
+
   const stats = {
     totalTasks: taskCount,
     pendingTasks: workerCount, // sum of required_workers
-    totalPayments: 950, // in coins or $ (your choice)
+    totalPayments: totalPayment, // sum of totalCost
   };
 
   return (
@@ -58,7 +70,7 @@ const BuyerStates = () => {
         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
           <div className="flex items-center justify-between">
             <h3 className="text-gray-600 font-medium">
-              Pending Workers
+              Pending Tasks
             </h3>
             <span className="text-3xl">⏳</span>
           </div>
