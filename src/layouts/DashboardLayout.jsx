@@ -98,9 +98,11 @@ const DashboardLayout = () => {
             Withdrawals
           </Link>
 
-          <Link to="/dashboard/withdraw-request" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
-            Withdraw Request
-          </Link>
+          {isAdmin && (
+            <Link to="/dashboard/withdraw-request" className="block px-4 py-2 rounded-md hover:bg-blue-500 transition">
+              Withdraw Request
+            </Link>
+          )}
 
           {isAdmin && (
             <>
