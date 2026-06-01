@@ -51,7 +51,14 @@ const TaskDetails = () => {
       },
       body: JSON.stringify(submissionData),
     }).then(()=>{
-      toast.success("Task submitted successfully!. Waiting for buyer's review.")
+      toast.success("Task submitted successfully!. Waiting for buyer's review.");
+      setTask((prevTask) => ({
+        ...prevTask,
+        required_workers: Math.max(
+          0,
+          Number(prevTask.required_workers || 0) - 1,
+        ),
+      }));
     }).catch((error)=>{
       toast.error("Failed to submit task. Please try again.");
       console.error("Submission error:", error);  
