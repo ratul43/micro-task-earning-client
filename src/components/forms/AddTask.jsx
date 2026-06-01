@@ -35,7 +35,7 @@ const AddTask = () => {
       await apiFetch("/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({...data, totalCost, buyer_email: `${user?.email}`}),
+        body: JSON.stringify({...data, totalCost, buyer_email: `${user?.email}`, buyer_name: `${user?.displayName}`}), // Include buyer email and name in task data
         // buyer name, buyer_email,  
       });
 
