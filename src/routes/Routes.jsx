@@ -24,6 +24,7 @@ import BuyerStates from "../components/dashboard/buyers/BuyerStates";
 import PaymentHistory from "../components/dashboard/buyers/PaymentHistory";
 import StripeCheckoutPage from './../pages/payment/StripeCheckoutPage';
 import CheckoutForm from './../pages/payment/CheckoutForm';
+import MyWithdrawRequestStatus from "../components/MyWithdrawRequestStatus";
 
 export const router = createBrowserRouter([
   {
@@ -127,6 +128,12 @@ export const router = createBrowserRouter([
     path: "withdraw-request",
     element: <div>
       <WithdrawRequest />
+    </div>
+  },
+  {
+    path: "my-withdraw-requests",
+    element: <div>
+      <MyWithdrawRequestStatus />
     </div>
   },
   {
