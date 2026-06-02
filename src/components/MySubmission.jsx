@@ -1,6 +1,7 @@
 // MySubmission.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { apiFetch } from "../apiService";
+import { AuthContext } from "../context/AuthContext";
 
 
 const getStatusStyle = (status) => {
@@ -15,14 +16,20 @@ const getStatusStyle = (status) => {
 const MySubmission = () => {
     const [submission, setSubmission] = useState([]);
 
-  useEffect(()=>{
+  const { user } = useContext(AuthContext);
 
-    (async()=>{
-      await apiFetch(`/tasks/submit`)
-      .then(data => setSubmission(data))
-    })()
+  useEffect(() => {
+    if (!user?.email) return;
 
-  }, [])
+    (async () => {
+      try {
+        const data = await apiFetch(`/tasks/submit?email=${encodeURIComponent(user.email)}`);
+        setSubmission(data);
+      } catch (err) {
+        console.error("Failed to fetch submissions:", err);
+      }
+    })();
+  }, [user?.email]);
   // console.log(submission);
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
