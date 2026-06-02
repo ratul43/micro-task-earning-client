@@ -57,7 +57,7 @@ const NavbarUI = () => {
                 >
                   Register
                 </Link>
-                <Link className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
+                <Link to="https://github.com/ratul43/micro-task-earning-client" className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
                   Join as Developer
                 </Link>
               </>
@@ -80,9 +80,9 @@ const NavbarUI = () => {
                     Logout
                   </button>
                 </div>
-                <a className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
+                <Link to="https://github.com/ratul43/micro-task-earning-client" className="bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
                   Join as Developer
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -101,27 +101,42 @@ const NavbarUI = () => {
         <div className="md:hidden mt-2 space-y-2">
           {!user ? (
             <>
-              <a className="block hover:text-gray-200 font-medium">Login</a>
-              <a className="block hover:text-gray-200 font-medium">Register</a>
-              <a className="block bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
+              <Link to="/login" className="block hover:text-gray-200 font-medium">
+                Login
+              </Link>
+              <Link to="/register" className="block hover:text-gray-200 font-medium">
+                Register
+              </Link>
+              <Link
+                to="https://github.com/ratul43/micro-task-earning-client"
+                className="block bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition"
+              >
                 Join as Developer
-              </a>
+              </Link>
             </>
           ) : (
             <>
-              <a className="block hover:text-gray-200 font-medium">Dashboard</a>
+              <Link to="/dashboard" className="block hover:text-gray-200 font-medium">
+                Dashboard
+              </Link>
               <span className="block bg-blue-500 px-3 py-1 rounded-md font-semibold">
                 Coins: {coins}
               </span>
-              <a className="block hover:text-gray-200 font-medium">
+              <Link to="/account" className="block hover:text-gray-200 font-medium">
                 <AccountDropdown />
-              </a>
-              <button className="block bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition">
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="block bg-red-500 px-3 py-1 rounded-md font-semibold hover:bg-red-600 transition"
+              >
                 Logout
               </button>
-              <a className="block bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition">
+              <Link
+                to="https://github.com/ratul43/micro-task-earning-client"
+                className="block bg-white text-blue-600 px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition"
+              >
                 Join as Developer
-              </a>
+              </Link>
             </>
           )}
         </div>
