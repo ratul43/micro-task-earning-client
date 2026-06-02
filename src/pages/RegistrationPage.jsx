@@ -1,13 +1,18 @@
 // RegistrationPage.jsx
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { apiFetch } from "../apiService";
 import { AuthContext } from "./../context/AuthContext";
 import { useNavigate } from "react-router";
 
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+
 const RegistrationPage = () => {
   const { registerUser, updateUserProfile } = use(AuthContext);
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   // console.log(registerUser);
 
   const navigate = useNavigate()
@@ -19,8 +24,33 @@ const RegistrationPage = () => {
     formState: { errors },
   } = useForm();
 
+  const uploadImageToImgbb = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(
+      `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    if (!response.ok || !result.data?.url) {
+      throw new Error(result.error?.message || "Image upload failed");
+    }
+
+    return result.data.url;
+  };
+
   const onSubmit = async (data) => {
     // console.log(data);
+
+    if (!data.photo && !profileImageFile) {
+      toast.error("Please provide a profile picture URL or upload an image.");
+      return;
+    }
 
     // This will throw error if email exists
     try {
@@ -33,26 +63,31 @@ const RegistrationPage = () => {
         return;
       }
 
+      let photoURL = data.photo;
+      if (profileImageFile) {
+        setUploadingImage(true);
+        photoURL = await uploadImageToImgbb(profileImageFile);
+      }
+
       // Register user
       await registerUser(data.email, data.password);
 
       // Update profile
       const userProfile = {
         displayName: data.name,
-        photoURL: data?.photo || "https://i.sstatic.net/l60Hf.png",
+        photoURL: photoURL || "https://i.sstatic.net/l60Hf.png",
       };
 
-    await updateUserProfile(userProfile);
-    // console.log(update);
+      await updateUserProfile(userProfile);
+      // console.log(update);
 
       // Save user in database
-
       await apiFetch("/users", {
         method: "POST",
         body: JSON.stringify({
           name: data.name,
           email: data.email,
-          photo: data.photo,
+          photo: photoURL,
           role: data.role,
           coins: data.role === "buyer" ? 50 : 10, // Give buyers some starting coins
         }),
@@ -60,11 +95,13 @@ const RegistrationPage = () => {
 
       toast.success("Registration successful");
       reset();
-      
-      // console.log(res);
-      navigate("/")
+      setProfileImageFile(null);
+      setProfileImagePreview(null);
+      navigate("/");
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -110,16 +147,33 @@ const RegistrationPage = () => {
 
           {/* Profile Picture */}
           <div>
-            <label className="block font-medium mb-1">
-              Profile Picture URL
-            </label>
-            <input
-              type="text"
-              {...register("photo", {
-                required: "Profile picture URL is required",
-              })}
-              className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            
+            <div className="mt-3">
+              <label className="block font-medium mb-1">Upload Profile Picture</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setProfileImageFile(file);
+                  const reader = new FileReader();
+                  reader.onload = () => setProfileImagePreview(reader.result);
+                  reader.readAsDataURL(file);
+                }}
+                className="w-full"
+              />
+              {profileImagePreview && (
+                <img
+                  src={profileImagePreview}
+                  alt="Profile preview"
+                  className="mt-3 w-full h-40 object-cover rounded-md border"
+                />
+              )}
+              {uploadingImage && (
+                <p className="mt-2 text-sm text-blue-600">Uploading profile image...</p>
+              )}
+            </div>
             {errors.photo && (
               <p className="text-red-500 text-sm">{errors.photo.message}</p>
             )}
