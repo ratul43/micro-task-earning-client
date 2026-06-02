@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Footer from "../components/Footer"; // adjust path if needed
 import { apiFetch } from "../apiService";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { UserDataContext } from "../context/UserDataContext";
 
@@ -13,6 +13,17 @@ const DashboardLayout = () => {
   const { userData } = useContext(UserDataContext);
   const [notificationsList, setNotificationsList] = useState([]);
   const popoverRef = useRef(null);
+  const navigate = useNavigate();
+
+  const fetchNotifications = async () => {
+    if (!user?.email) return;
+    try {
+      const data = await apiFetch(`/notifications?email=${encodeURIComponent(user.email)}`);
+      setNotificationsList(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch notifications:", err);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -52,6 +63,40 @@ const DashboardLayout = () => {
 
     return () => { mounted = false; };
   }, [user?.email]);
+
+  const unreadCount = notificationsList.filter((n) => !n.read).length;
+
+  const markNotificationRead = async (id) => {
+    try {
+      await apiFetch(`/notifications/${id}/read`, { method: "PUT" });
+      setNotificationsList((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n)),
+      );
+    } catch (err) {
+      console.error("Failed to mark notification read:", err);
+    }
+  };
+
+  const markAllRead = async () => {
+    if (!user?.email) return;
+    try {
+      await apiFetch("/notifications/read-all", {
+        method: "PUT",
+        body: JSON.stringify({ email: user.email }),
+      });
+      setNotificationsList((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("Failed to mark all notifications read:", err);
+    }
+  };
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification.read) {
+      await markNotificationRead(notification._id);
+    }
+    setShowNotifications(false);
+    navigate(notification.actionRoute || "/dashboard");
+  };
 
   const displayName =
     userData?.displayName || user?.displayName || user?.email?.split("@")[0] || "Guest";
@@ -210,28 +255,35 @@ const DashboardLayout = () => {
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                   <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                 </svg>
-                {notificationsList.length > 0 && (
+                {unreadCount > 0 && (
                   <span className="absolute top-0 right-0 inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                 )}
               </button>
 
               {showNotifications && (
                 <div ref={popoverRef} onClick={(e)=>e.stopPropagation()} className="absolute right-0 mt-2 w-80 max-h-96 overflow-auto rounded-2xl border border-gray-200 bg-white shadow-xl ring-1 ring-black ring-opacity-5 z-50">
-                  <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                     <h2 className="text-sm font-semibold text-gray-900">Notifications</h2>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllRead}
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Mark all read
+                      </button>
+                    )}
                   </div>
                   <div className="p-2">
                     {notificationsList.length > 0 ? (
                       notificationsList.map((n) => (
-                        <Link
+                        <button
                           key={n._id}
-                          to={n.actionRoute || "/dashboard"}
-                          onClick={() => setShowNotifications(false)}
-                          className="block px-3 py-2 hover:bg-gray-50 border-b last:border-b-0"
+                          onClick={() => handleNotificationClick(n)}
+                          className={`w-full text-left px-3 py-2 border-b last:border-b-0 ${n.read ? "bg-white" : "bg-blue-50"} hover:bg-gray-50`}
                         >
                           <p className="text-sm text-gray-700">{n.message}</p>
                           <p className="text-xs text-gray-400">{new Date(n.time).toLocaleString()}</p>
-                        </Link>
+                        </button>
                       ))
                     ) : (
                       <p className="text-sm text-gray-500 p-3">No notifications.</p>
