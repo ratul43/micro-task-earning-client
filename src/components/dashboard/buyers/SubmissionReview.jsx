@@ -9,7 +9,7 @@ const SubmissionReview = () => {
   useEffect(()=>{
     (async()=>{
    const data = await apiFetch(`/tasks/submit`)
-   setSubmissions(data)
+   setSubmissions(data.submissions || [])
   })()
   }, [])
 
