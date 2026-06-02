@@ -1,13 +1,51 @@
-// AdminState.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { apiFetch } from "../../apiService";
 
 const AdminState = () => {
-  const stats = {
-    totalWorkers: 1200,
-    totalBuyers: 300,
-    totalCoins: 50000,
-    totalPayments: 2500, // in dollars
-  };
+  const [stats, setStats] = useState({
+    totalWorkers: 0,
+    totalBuyers: 0,
+    totalCoins: 0,
+    totalPayments: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [users, withdrawals] = await Promise.all([
+          apiFetch("/users"),
+          apiFetch("/withdrawal"),
+        ]);
+
+        const totalWorkers = users.filter(
+          (user) => user.role === "worker",
+        ).length;
+        const totalBuyers = users.filter((user) => user.role === "buyer").length;
+        const totalCoins = users.reduce(
+          (sum, user) => sum + (Number(user.coins) || 0),
+          0,
+        );
+        const totalPayments = withdrawals
+          .filter((withdrawal) => withdrawal.status === "approved")
+          .reduce(
+            (sum, withdrawal) =>
+              sum + (Number(withdrawal.withdrawal_amount) || 0),
+            0,
+          );
+
+        setStats({ totalWorkers, totalBuyers, totalCoins, totalPayments });
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load admin stats.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <div className="p-6">
@@ -17,8 +55,12 @@ const AdminState = () => {
         Admin Dashboard Overview
       </h2>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {loading ? (
+        <p className="text-gray-600">Loading stats...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Total Workers */}
         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
@@ -73,6 +115,7 @@ const AdminState = () => {
         </div>
 
       </div>
+      )}
     </div>
   );
 };
