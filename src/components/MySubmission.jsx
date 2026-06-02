@@ -17,19 +17,25 @@ const MySubmission = () => {
     const [submission, setSubmission] = useState([]);
 
   const { user } = useContext(AuthContext);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
     if (!user?.email) return;
 
     (async () => {
       try {
-        const data = await apiFetch(`/tasks/submit?email=${encodeURIComponent(user.email)}`);
-        setSubmission(data);
+        const data = await apiFetch(`/tasks/submit?email=${encodeURIComponent(
+          user.email,
+        )}&page=${page}&limit=${limit}`);
+        setSubmission(data.submissions || []);
+        setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Failed to fetch submissions:", err);
       }
     })();
-  }, [user?.email]);
+  }, [user?.email, page]);
   // console.log(submission);
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -98,6 +104,37 @@ const MySubmission = () => {
           </tbody>
 
         </table>
+      </div>
+      {/* Pagination Controls */}
+      <div className="mt-4 flex items-center justify-center space-x-2">
+        <button
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page <= 1}
+          className={`px-3 py-1 rounded ${page <= 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 text-white'}`}
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }).map((_, idx) => {
+          const p = idx + 1;
+          return (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`px-3 py-1 rounded ${p === page ? 'bg-blue-800 text-white' : 'bg-gray-100'}`}
+            >
+              {p}
+            </button>
+          );
+        })}
+
+        <button
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page >= totalPages}
+          className={`px-3 py-1 rounded ${page >= totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-blue-600 text-white'}`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
