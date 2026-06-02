@@ -1,13 +1,18 @@
-import React, { use, useContext } from "react";
+import React, { use, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { apiFetch } from "../../apiService";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import { UserDataContext } from "../../context/UserDataContext";
 
+const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
+
 const AddTask = () => {
   const { user } = use(AuthContext);
   const { userData, fetchUserData } = useContext(UserDataContext);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const availableCoins = Number(userData?.coins ?? 0);
 
@@ -18,25 +23,58 @@ const AddTask = () => {
 
   const totalCost = requiredWorkers * payableAmount;
 
+  const uploadImageToImgbb = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(
+      `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    if (!response.ok || !result.data?.url) {
+      throw new Error(result.error?.message || "Image upload failed");
+    }
+
+    return result.data.url;
+  };
+
   const onSubmit = async (data) => {
     if (totalCost > availableCoins) {
-      const userConfirmed =  confirm("Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?") 
+      const userConfirmed = confirm(
+        "Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?"
+      );
       if (userConfirmed) {
-      window.location.href = "/purchase-coins"; // redirect
+        window.location.href = "/purchase-coins"; // redirect
+        return;
+      } else {
+        return; // Stop form submission
+      }
+    }
+
+    if (!imageFile) {
+      toast.error("Please select an image for the task.");
       return;
     }
-    else{
-      return; // Stop form submission
-    }
-  }
-    
 
     try {
+      setUploadingImage(true);
+      const taskImageUrl = await uploadImageToImgbb(imageFile);
+
       await apiFetch("/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({...data, totalCost, buyer_email: `${user?.email}`, buyer_name: `${user?.displayName}`}), // Include buyer email and name in task data
-        // buyer name, buyer_email,  
+        body: JSON.stringify({
+          ...data,
+          task_image_url: taskImageUrl,
+          totalCost,
+          buyer_email: `${user?.email}`,
+          buyer_name: `${user?.displayName}`,
+        }),
       });
 
       // Deduct coins from buyer's account
@@ -52,16 +90,15 @@ const AddTask = () => {
       // Refresh user data to update coins everywhere
       await fetchUserData();
 
-      // console.log(response);
-
       toast.success("Task Added Successfully");
       reset(); // Clear form after successful submission
-
-
-    } 
-    catch (err) {
+      setImageFile(null);
+      setImagePreview(null);
+    } catch (err) {
       console.error("Error adding task:", err.message);
       toast.error("Failed to add task. Please try again.");
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -161,44 +198,65 @@ const AddTask = () => {
           )}
         </div>
 
-        {/* Image URL */}
+        {/* Image Field */}
         <div>
           <label className="block font-medium mb-1">Image</label>
-         
+          <div className="max-w-xl">
+            <label className="flex flex-col justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+              <span className="flex items-center justify-center space-x-2 text-gray-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                <span className="font-medium text-gray-600 text-center">
+                  Drop image here, or browse to select a file
+                </span>
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setImageFile(file);
+
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    setImagePreview(reader.result);
+                  };
+                  reader.readAsDataURL(file);
+                }}
+              />
+            </label>
+          </div>
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="preview"
+              className="mt-3 h-40 w-full object-cover rounded border"
+            />
+          )}
+          {!imagePreview && (
+            <p className="mt-2 text-sm text-gray-500">
+              Upload a task image to show buyers what they will work on.
+            </p>
+          )}
         </div>
-        
-        <div>
-<>
- <div className="max-w-xl">
-  <label className="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
-    <span className="flex items-center space-x-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-6 h-6 text-gray-600"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-        />
-      </svg>
-      <span className="font-medium text-gray-600">
-        Drop files to Attach, or
-        <span className="text-blue-600 ml-1 underline">browse</span>
-      </span>
-    </span>
-    <input type="file" name="file_upload" className="hidden" />
-  </label>
-</div>
 
-
-</>
-
-        </div>
+        {uploadingImage && (
+          <p className="text-sm text-blue-600">Uploading...</p>
+        )}
 
         {/* Total Cost Display */}
         <div className="bg-blue-50 p-3 rounded-md">
