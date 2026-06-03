@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import { UserDataContext } from "../../context/UserDataContext";
 
+
 const IMGBB_API_KEY = import.meta.env.VITE_IMGBB_API_KEY;
 
 const AddTask = () => {
@@ -24,6 +25,9 @@ const AddTask = () => {
   const totalCost = requiredWorkers * payableAmount;
 
   const uploadImageToImgbb = async (file) => {
+    if(userData?.role !== 'buyer'){
+      return
+    }
     const formData = new FormData();
     formData.append("image", file);
 
@@ -44,6 +48,7 @@ const AddTask = () => {
   };
 
   const onSubmit = async (data) => {
+    
     if (totalCost > availableCoins) {
       const userConfirmed = confirm(
         "Don't have enough coins to post this task. Please purchase more coins to proceed. Do you want to purchase coins now?"
@@ -65,7 +70,7 @@ const AddTask = () => {
       setUploadingImage(true);
       const taskImageUrl = await uploadImageToImgbb(imageFile);
 
-      await apiFetch("/tasks", {
+      await apiFetch(`/tasks?email=${user.email}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
