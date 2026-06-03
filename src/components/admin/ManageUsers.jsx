@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { apiFetch } from "../../apiService";
+import { AuthContext } from "./../../context/AuthContext";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { user } = useContext(AuthContext);
+
   // Fetch users on component mount
+
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if(user){
+          fetchUsers();
+    }
+  }, [user]);
 
   const fetchUsers = async () => {
     try {
-      const data = await apiFetch("/users");
+      const token = await user?.getIdToken()
+
+      const data = await apiFetch("/users", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       setUsers(data);
     } catch (error) {
       toast.error("Failed to fetch users");
@@ -32,9 +44,11 @@ const ManageUsers = () => {
 
       if (response) {
         // Update local state
-        setUsers(users.map(user => 
-          user._id === userId ? { ...user, role: newRole } : user
-        ));
+        setUsers(
+          users.map((user) =>
+            user._id === userId ? { ...user, role: newRole } : user,
+          ),
+        );
         toast.success(`User role updated to ${newRole}!`);
       }
     } catch (error) {
@@ -46,7 +60,7 @@ const ManageUsers = () => {
   // Remove user
   const removeUser = async (userId) => {
     if (!window.confirm("Are you sure you want to remove this user?")) return;
-    
+
     try {
       const response = await apiFetch(`/users/${userId}`, {
         method: "DELETE",
@@ -54,7 +68,7 @@ const ManageUsers = () => {
 
       if (response) {
         // Remove from local state
-        setUsers(users.filter(user => user._id !== userId));
+        setUsers(users.filter((user) => user._id !== userId));
         toast.success("User removed successfully!");
       }
     } catch (error) {
@@ -69,20 +83,30 @@ const ManageUsers = () => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        Manage Users
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">Manage Users</h2>
 
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Photo</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Name</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Email</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Role</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Coins</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Actions</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Photo
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Name
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Email
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Role
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Coins
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -96,7 +120,9 @@ const ManageUsers = () => {
                   />
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">{user.name}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">{user.email}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {user.email}
+                </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
                   <select
                     value={user.role}
@@ -108,7 +134,9 @@ const ManageUsers = () => {
                     <option value="worker">Worker</option>
                   </select>
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-700">{user.balance || 0}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {user.balance || 0}
+                </td>
                 <td className="px-4 py-2 space-x-2">
                   <button
                     onClick={() => removeUser(user._id)}
