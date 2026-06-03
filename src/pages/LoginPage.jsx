@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router";
+import { apiFetch } from './../apiService';
 
 const LoginPage = () => {
 
@@ -21,9 +22,20 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     // console.log(data); // you will handle login later
     signInUser(data.email, data.password)
-      .then((res)=>{
-          // console.log(res);
-          toast.success("Login successful");
+      .then( async (res)=>{
+
+        const user = res.user 
+
+        const token = await user.getIdToken()
+
+        await apiFetch("/jwt",{
+          method:'POST',
+          body: JSON.stringify({
+            token,  
+          }),
+        })
+
+        toast.success("Login successful");
           navigate("/");
       })
       .catch((error)=>{
@@ -34,8 +46,7 @@ const LoginPage = () => {
   const handleGoogleSignIn = () => {
     signInGoogle()
       .then((res)=>{
-          // console.log(res);
-          toast.success("Google Sign-In successful");
+        toast.success("Google Sign-In successful");
           // window.location.href = "/"; // Redirect to home page after successful login
           navigate("/")
       })
