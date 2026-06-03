@@ -21,7 +21,7 @@ const ManageUsers = () => {
     try {
       const token = await user?.getIdToken()
 
-      const data = await apiFetch("/users", {
+      const data = await apiFetch(`/users?email=${user?.email}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
