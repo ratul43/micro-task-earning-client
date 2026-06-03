@@ -26,6 +26,7 @@ const NavbarUI = () => {
   const handleLogout = async () => {
     try {
       await logOut();
+      localStorage.removeItem("accessToken")
       toast.success("Logged out successfully!");
     } catch (error) {
       // console.error("Logout failed:", error);

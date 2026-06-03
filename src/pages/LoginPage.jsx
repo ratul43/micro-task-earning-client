@@ -19,6 +19,10 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm();
 
+  const storeToken = (token) => {
+    localStorage.setItem("accessToken", token)
+  }
+
   const onSubmit = (data) => {
     // console.log(data); // you will handle login later
     signInUser(data.email, data.password)
@@ -28,12 +32,16 @@ const LoginPage = () => {
 
         const token = await user.getIdToken()
 
-        await apiFetch("/jwt",{
+      const result =  await apiFetch("/jwt",{
           method:'POST',
           body: JSON.stringify({
             token,  
           }),
         })
+
+        if(result){
+          await storeToken(token)
+        }
 
         toast.success("Login successful");
           navigate("/");
@@ -45,7 +53,13 @@ const LoginPage = () => {
 
   const handleGoogleSignIn = () => {
     signInGoogle()
-      .then((res)=>{
+      .then(async (res)=>{
+        const user = res.user 
+
+        const token = await user.getIdToken()
+
+        await storeToken(token)
+        
         toast.success("Google Sign-In successful");
           // window.location.href = "/"; // Redirect to home page after successful login
           navigate("/")
