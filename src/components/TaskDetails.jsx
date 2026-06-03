@@ -7,23 +7,27 @@ import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 
 const TaskDetails = () => {
-  const {user} = use(AuthContext)
+  const { user } = use(AuthContext);
   const { register, handleSubmit, reset } = useForm();
-  const {taskId} = useParams()
-  const [task, setTask] = useState({})
+  const { taskId } = useParams();
+  const [task, setTask] = useState({});
   // console.log(taskId);
 
-  useEffect(()=>{
-    (async()=>{
-      await apiFetch(`/tasks/details?id=${taskId}`)
-      .then(data => setTask(data))
-    })()
-  }, [taskId])
+  useEffect(() => {
+    (async () => {
+      const token = await user?.getIdToken();
 
+      await apiFetch(`/tasks/details?id=${taskId}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((data) => setTask(data));
+    })();
+  }, [taskId, user]);
 
   // Dummy Worker Info (replace later)
   const worker = {
-    worker_name:  user?.displayName || "not found",
+    worker_name: user?.displayName || "not found",
     worker_email: user?.email || "not found",
   };
 
@@ -50,43 +54,40 @@ const TaskDetails = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(submissionData),
-    }).then(()=>{
-      toast.success("Task submitted successfully!. Waiting for buyer's review.");
-      setTask((prevTask) => ({
-        ...prevTask,
-        required_workers: Math.max(
-          0,
-          Number(prevTask.required_workers || 0) - 1,
-        ),
-      }));
-    }).catch((error)=>{
-      toast.error("Failed to submit task. Please try again.");
-      console.error("Submission error:", error);  
     })
-
+      .then(() => {
+        toast.success(
+          "Task submitted successfully!. Waiting for buyer's review.",
+        );
+        setTask((prevTask) => ({
+          ...prevTask,
+          required_workers: Math.max(
+            0,
+            Number(prevTask.required_workers || 0) - 1,
+          ),
+        }));
+      })
+      .catch((error) => {
+        toast.error("Failed to submit task. Please try again.");
+        console.error("Submission error:", error);
+      });
 
     reset();
   };
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      
       {/* Task Info Card */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-        
         <img
           src={task.task_image_url}
           alt="task"
           className="w-full h-60 object-cover rounded-md mb-4"
         />
 
-        <h2 className="text-2xl font-bold mb-2">
-          {task.task_title}
-        </h2>
+        <h2 className="text-2xl font-bold mb-2">{task.task_title}</h2>
 
-        <p className="text-gray-600 mb-4">
-          {task.task_detail}
-        </p>
+        <p className="text-gray-600 mb-4">{task.task_detail}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <p>
@@ -107,29 +108,21 @@ const TaskDetails = () => {
 
           <p>
             👥 Workers Needed:{" "}
-            <span className="font-medium">
-              {task.required_workers}
-            </span>
+            <span className="font-medium">{task.required_workers}</span>
           </p>
 
           <p className="md:col-span-2">
             📌 Submission Info:{" "}
-            <span className="font-medium">
-              {task.submission_info}
-            </span>
+            <span className="font-medium">{task.submission_info}</span>
           </p>
         </div>
       </div>
 
       {/* Submission Form */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        
-        <h3 className="text-xl font-bold mb-4">
-          Submit Your Work
-        </h3>
+        <h3 className="text-xl font-bold mb-4">Submit Your Work</h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
           <textarea
             placeholder="Enter your submission details (e.g. screenshot link, proof, etc.)"
             {...register("submission_details", {
