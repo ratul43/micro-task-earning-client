@@ -48,7 +48,7 @@ const TaskDetails = () => {
 
     // console.log(submissionData);
 
-    await apiFetch(`/tasks/submit`, {
+    await apiFetch(`/tasks/submit?email=${user?.email}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
